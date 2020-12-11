@@ -1,5 +1,5 @@
-#ifndef __NONCOPYABLE_H_
-#define __NONCOPYABLE_H_
+#ifndef __MUDUO_NONCOPYABLE_H_
+#define __MUDUO_NONCOPYABLE_H_
 
 namespace muduo {
 namespace event_loop {

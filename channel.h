@@ -1,7 +1,7 @@
 #ifndef __CHANNEL_H_
 #define __CHANNEL_H_
 
-#include "event_base.h"
+#include "callback.h"
 #include "noncopyable.h"
 
 namespace muduo {

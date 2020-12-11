@@ -1,6 +1,7 @@
 #include "event_loop.h"
 #include "channel.h"
 #include "poller.h"
+#include "timer.h"
 #include <assert.h>
 
 namespace muduo {
@@ -17,6 +18,7 @@ void EventLoop::Loop() {
         active_channels_.clear();
         poll_timestamp_ = poller_->Poll(10000, &active_channels_);
 
+        // empty channels for timeout
         for (Channel *channel : active_channels_) {
             current_channel_ = channel;
             current_channel_->HandleEvent(poll_timestamp_);
@@ -28,6 +30,34 @@ void EventLoop::Loop() {
 void EventLoop::RunInLoop(Functor cb) {}
 
 void EventLoop::QueueInLoop(Functor cb) {}
+
+void EventLoop::RunAt(Timestamp time, TimerCallback cb) {
+    std::shared_ptr<Timer> timer(new Timer(this, std::move(cb), time, 0));
+    timers_.insert(std::make_pair(timer->fd(), timer));
+    return RunEveryAt(0, time, std::move(cb));
+}
+
+void EventLoop::RunAfter(double delay, TimerCallback cb) {
+     return RunEveryAfter(0, delay, std::move(cb));
+}
+
+void EventLoop::RunEvery(double interval, TimerCallback cb) {
+    return RunEveryAfter(interval, 0, std::move(cb));
+}
+
+void EventLoop::RunEveryAfter(double interval, double delay, TimerCallback cb) {
+    std::shared_ptr<Timer> timer(
+        new Timer(this, std::move(cb), delay, interval));
+    timers_.insert(std::make_pair(timer->fd(), timer));
+}
+
+void EventLoop::RunEveryAt(double interval, Timestamp time, TimerCallback cb) {
+    std::shared_ptr<Timer> timer(
+        new Timer(this, std::move(cb), time, interval));
+    timers_.insert(std::make_pair(timer->fd(), timer));
+}
+
+void EventLoop::RemoveTimer(int timer_fd) { timers_.erase(timer_fd); }
 
 void EventLoop::UpdateChannel(Channel *channel) {
     poller_->UpdateChannel(channel);

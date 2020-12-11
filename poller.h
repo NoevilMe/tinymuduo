@@ -1,8 +1,9 @@
 #ifndef __POLLER_H_
 #define __POLLER_H_
 
-#include "event_base.h"
+#include "callback.h"
 #include "noncopyable.h"
+
 #include <map>
 #include <sys/epoll.h>
 #include <vector>

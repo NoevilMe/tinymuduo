@@ -26,9 +26,7 @@ Timestamp EpollPoller::Poll(int timeout, ChannelList *active_channels) {
     int numEvents = ::epoll_wait(epoll_fd_, &*events_.begin(),
                                  static_cast<int>(events_.size()), timeout);
     int savedErrno = errno;
-    Timestamp now = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::system_clock::now().time_since_epoch())
-                        .count();
+    Timestamp now = Timestamp::Now();
 
     if (numEvents > 0) {
         for (int i = 0; i < numEvents; ++i) {
