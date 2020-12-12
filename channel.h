@@ -1,5 +1,5 @@
-#ifndef __CHANNEL_H_
-#define __CHANNEL_H_
+#ifndef __MUDUO_CHANNEL_H_
+#define __MUDUO_CHANNEL_H_
 
 #include "callback.h"
 #include "noncopyable.h"

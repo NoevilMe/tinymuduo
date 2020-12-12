@@ -9,6 +9,8 @@ namespace event_loop {
 constexpr int64_t kMilliSecondsPerSecond = 1000;
 constexpr int64_t kMicroSecondsPerSecond = 1000000;
 constexpr int64_t kNanoSecondsPerSecond = 1000000000;
+constexpr int64_t kNanoSecondsPerMilliSecond = 1000000;
+constexpr int64_t kNanoSecondsPerMicroSecond = 1000;
 
 } // namespace event_loop
 } // namespace muduo

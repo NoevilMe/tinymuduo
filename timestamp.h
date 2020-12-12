@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <ctime>
+#include <string>
 
 namespace muduo {
 namespace event_loop {
@@ -16,28 +17,18 @@ public:
     /// Constucts a Timestamp at specific time
     ///
     /// @param nanoseconds
-    explicit Timestamp(int64_t nanoseconds)
-        : nanoseconds_since_epoch_(nanoseconds) {}
+    explicit Timestamp(int64_t nanoseconds);
 
     ~Timestamp();
 
-    bool valid() const { return nanoseconds_since_epoch_ > 0; }
+    bool valid() const; 
 
-    int64_t nanoseconds_since_epoch() const { return nanoseconds_since_epoch_; }
+    int64_t nanoseconds_since_epoch() const;
+    int64_t microseconds_since_epoch() const;
+    int64_t milliseconds_since_epoch() const;
+    time_t seconds_since_epoch() const;
 
-    int64_t microseconds_since_epoch() const {
-        return nanoseconds_since_epoch_ / 1000;
-    }
-    int64_t milliseconds_since_epoch() const {
-        return nanoseconds_since_epoch_ / 1000000;
-    }
-
-    time_t seconds_since_epoch() const {
-        return static_cast<time_t>(nanoseconds_since_epoch_ /
-                                   kMicroSecondsPerSecond);
-    }
-
-    // string toString() const;
+    std::string ToString() const;
     // string toFormattedString(bool showMicroseconds = true) const;
 
     static struct timespec TimespecNow();

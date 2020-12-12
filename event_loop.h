@@ -3,6 +3,7 @@
 
 #include "callback.h"
 #include "noncopyable.h"
+#include "timestamp.h"
 
 #include <functional>
 #include <map>
@@ -17,7 +18,6 @@ namespace event_loop {
 class Channel;
 class Poller;
 class Timer;
-class Timestamp;
 
 class EventLoop {
 public:

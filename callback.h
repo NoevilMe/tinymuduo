@@ -1,11 +1,12 @@
 #ifndef __MUDUO_CALLBACK_H_
 #define __MUDUO_CALLBACK_H_
 
-#include "timestamp.h"
 #include <functional>
 
 namespace muduo {
 namespace event_loop {
+
+class Timestamp;
 
 using Functor = std::function<void()>;
 

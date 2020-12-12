@@ -5,6 +5,7 @@ set(LIB_SRC
     timer.cxx
     timespan.cxx
     timestamp.cxx
+    timespec.cxx
     )
 
 add_library(eventloop STATIC ${LIB_SRC})
