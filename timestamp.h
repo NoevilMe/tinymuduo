@@ -29,7 +29,9 @@ public:
     time_t seconds_since_epoch() const;
 
     std::string ToString() const;
-    // string toFormattedString(bool showMicroseconds = true) const;
+    std::string ToFormattedString() const;
+    std::string ToFormattedMilliSecondsString() const;
+    std::string ToFormattedMicroSecondsString() const;
 
     static struct timespec TimespecNow();
 

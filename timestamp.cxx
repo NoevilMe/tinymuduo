@@ -1,5 +1,8 @@
 #include "timestamp.h"
 
+#include <iomanip>
+#include <sstream>
+
 namespace muduo {
 namespace event_loop {
 
@@ -35,6 +38,44 @@ std::string Timestamp::ToString() const {
     int64_t nanoseconds = nanoseconds_since_epoch_ % kNanoSecondsPerSecond;
     snprintf(buf, sizeof(buf), "%lld.%09lld", seconds, nanoseconds);
     return buf;
+}
+
+std::string Timestamp::ToFormattedString() const {
+    int64_t nano = nanoseconds_since_epoch_ % kNanoSecondsPerSecond;
+
+    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
+    std::tm *bt = localtime(&tt);
+    std::ostringstream oss;
+    // https://en.cppreference.com/w/cpp/io/manip/put_time
+    oss << std::put_time(bt, "%F %T");
+    oss << "." << std::setfill('0') << std::setw(9) << nano;
+    return oss.str();
+}
+
+std::string Timestamp::ToFormattedMilliSecondsString() const {
+    int64_t ms = nanoseconds_since_epoch_ % kNanoSecondsPerSecond /
+                 1000000;
+
+    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
+    std::tm *bt = localtime(&tt);
+    std::ostringstream oss;
+    // https://en.cppreference.com/w/cpp/io/manip/put_time
+    oss << std::put_time(bt, "%F %T");
+    oss << "." << std::setfill('0') << std::setw(3) << ms;
+    return oss.str();
+}
+
+std::string Timestamp::ToFormattedMicroSecondsString() const {
+    int64_t ms = nanoseconds_since_epoch_ % kNanoSecondsPerSecond /
+                 1000;
+
+    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
+    std::tm *bt = localtime(&tt);
+    std::ostringstream oss;
+    // https://en.cppreference.com/w/cpp/io/manip/put_time
+    oss << std::put_time(bt, "%F %T");
+    oss << "." << std::setfill('0') << std::setw(6) << ms;
+    return oss.str();
 }
 
 struct timespec Timestamp::TimespecNow() {
