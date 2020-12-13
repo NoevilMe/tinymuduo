@@ -32,8 +32,6 @@ void EventLoop::RunInLoop(Functor cb) {}
 void EventLoop::QueueInLoop(Functor cb) {}
 
 void EventLoop::RunAt(Timestamp time, TimerCallback cb) {
-    std::shared_ptr<Timer> timer(new Timer(this, std::move(cb), time, 0));
-    timers_.insert(std::make_pair(timer->fd(), timer));
     return RunEveryAt(0, time, std::move(cb));
 }
 

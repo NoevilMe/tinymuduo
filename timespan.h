@@ -25,4 +25,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __TIMER_H_ */
+#endif /* __MUDUO_TIMESPAN_H_ */

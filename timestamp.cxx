@@ -9,8 +9,8 @@ namespace event_loop {
 Timestamp::Timestamp() : ts_({0, 0}) {}
 
 Timestamp::Timestamp(int64_t nanoseconds)
-    : ts_({nanoseconds / kNanoSecondsPerSecond,
-           nanoseconds % kNanoSecondsPerSecond}) {}
+    : ts_({static_cast<time_t>(nanoseconds / kNanoSecondsPerSecond),
+           static_cast<long>(nanoseconds % kNanoSecondsPerSecond)}) {}
 
 Timestamp::Timestamp(const struct timespec &ts) : ts_(ts) {}
 

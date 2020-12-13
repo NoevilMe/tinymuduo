@@ -1,5 +1,5 @@
-#ifndef __TIMER_H_
-#define __TIMER_H_
+#ifndef __MUDUO_TIMER_H_
+#define __MUDUO_TIMER_H_
 
 #include "callback.h"
 
@@ -24,8 +24,6 @@ public:
 
     bool Expired();
 
-    bool operator<(const Timer &an) { return timer_fd_ < an.timer_fd_; }
-
     int fd() const { return timer_fd_; }
 
 private:
@@ -42,4 +40,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __TIMER_H_ */
+#endif /* __MUDUO_TIMER_H_ */

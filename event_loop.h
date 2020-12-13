@@ -1,5 +1,5 @@
-#ifndef __EVENT_LOOP_H_
-#define __EVENT_LOOP_H_
+#ifndef __MUDUO_EVENT_LOOP_H_
+#define __MUDUO_EVENT_LOOP_H_
 
 #include "callback.h"
 #include "noncopyable.h"
@@ -77,4 +77,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __EVENT_LOOP_H_ */
+#endif /* __MUDUO_EVENT_LOOP_H_ */

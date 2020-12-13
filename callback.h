@@ -15,8 +15,7 @@ using ReadEventCallback = std::function<void(Timestamp)>;
 
 using TimerCallback = std::function<void()>;
 
-
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __EVENT_BASE_H_ */
+#endif /* __MUDUO_CALLBACK_H_ */

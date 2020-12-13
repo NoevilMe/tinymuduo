@@ -75,4 +75,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __CHANNEL_H_ */
+#endif /* __MUDUO_CHANNEL_H_ */

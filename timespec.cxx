@@ -7,11 +7,12 @@
 namespace muduo {
 namespace event_loop {
 
-struct timespec operator-(const struct timespec &start,
-                          const struct timespec &end) {
-    int64_t si = timespec_to_int64(start);
+struct timespec operator-(const struct timespec &end,
+                          const struct timespec &start) {
     int64_t ei = timespec_to_int64(end);
-    if (si < ei) {
+    int64_t si = timespec_to_int64(start);
+
+    if (ei < si) {
         return timespec({0, 0});
     } else {
         return int64_to_timespec(ei - si);

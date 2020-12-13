@@ -1,5 +1,5 @@
-#ifndef __POLLER_H_
-#define __POLLER_H_
+#ifndef __MUDUO_POLLER_H_
+#define __MUDUO_POLLER_H_
 
 #include "callback.h"
 #include "noncopyable.h"
@@ -55,4 +55,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __POLLER_H_ */
+#endif /* __MUDUO_POLLER_H_ */

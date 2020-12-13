@@ -15,4 +15,4 @@ constexpr int64_t kNanoSecondsPerMicroSecond = 1000;
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __EVENT_BASE_H_ */
+#endif /* __MUDUO_CONSTANTS_H_ */

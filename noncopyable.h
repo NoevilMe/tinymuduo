@@ -17,4 +17,4 @@ protected:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __NONCOPYABLE_H_ */
+#endif /* __MUDUO_NONCOPYABLE_H_ */

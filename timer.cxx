@@ -1,6 +1,7 @@
 #include "timer.h"
 #include "channel.h"
 #include "event_loop.h"
+#include "timespec.h"
 #include "timestamp.h"
 
 #include <sys/timerfd.h>
@@ -10,10 +11,6 @@
 
 namespace muduo {
 namespace event_loop {
-
-struct timespec doulbe_to_timespec(double s);
-void set_timespec_zero(struct timespec &t);
-bool timespec_is_zero(const struct timespec &t);
 
 Timer::Timer(EventLoop *eventloop, TimerCallback cb, Timestamp when,
              double interval_seconds)

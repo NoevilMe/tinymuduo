@@ -7,8 +7,8 @@
 namespace muduo {
 namespace event_loop {
 
-struct timespec operator-(const struct timespec &start,
-                          const struct timespec &end);
+struct timespec operator-(const struct timespec &end,
+                          const struct timespec &start);
 
 int64_t timespec_to_int64(const struct timespec &t);
 
@@ -23,4 +23,4 @@ bool timespec_is_zero(const struct timespec &t);
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __TIMER_H_ */
+#endif /* __MUDUO_TIMESPEC_H_ */
