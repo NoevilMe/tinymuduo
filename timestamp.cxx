@@ -6,75 +6,68 @@
 namespace muduo {
 namespace event_loop {
 
-Timestamp::Timestamp() : nanoseconds_since_epoch_(0) {}
+Timestamp::Timestamp() : ts_({0, 0}) {}
 
 Timestamp::Timestamp(int64_t nanoseconds)
-    : nanoseconds_since_epoch_(nanoseconds) {}
+    : ts_({nanoseconds / kNanoSecondsPerSecond,
+           nanoseconds % kNanoSecondsPerSecond}) {}
+
+Timestamp::Timestamp(const struct timespec &ts) : ts_(ts) {}
 
 Timestamp::~Timestamp() {}
 
-bool Timestamp::valid() const { return nanoseconds_since_epoch_ > 0; }
+bool Timestamp::valid() const { return ts_.tv_sec > 0 && ts_.tv_nsec > 0; }
 
 int64_t Timestamp::nanoseconds_since_epoch() const {
-    return nanoseconds_since_epoch_;
+    return static_cast<int64_t>(ts_.tv_sec) * kNanoSecondsPerSecond +
+           ts_.tv_nsec;
 }
 
 int64_t Timestamp::microseconds_since_epoch() const {
-    return nanoseconds_since_epoch_ / kNanoSecondsPerMicroSecond;
+    return static_cast<int64_t>(ts_.tv_sec) * kMicroSecondsPerSecond +
+           ts_.tv_nsec / kNanoSecondsPerMicroSecond;
 }
 
 int64_t Timestamp::milliseconds_since_epoch() const {
-    return nanoseconds_since_epoch_ / kNanoSecondsPerMilliSecond;
+    return static_cast<int64_t>(ts_.tv_sec) * kMilliSecondsPerSecond +
+           ts_.tv_nsec / kNanoSecondsPerMilliSecond;
 }
 
-time_t Timestamp::seconds_since_epoch() const {
-    return static_cast<time_t>(nanoseconds_since_epoch_ /
-                               kNanoSecondsPerSecond);
-}
+time_t Timestamp::seconds_since_epoch() const { return ts_.tv_sec; }
 
 std::string Timestamp::ToString() const {
     char buf[32] = {0};
-    int64_t seconds = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
-    int64_t nanoseconds = nanoseconds_since_epoch_ % kNanoSecondsPerSecond;
-    snprintf(buf, sizeof(buf), "%lld.%09lld", seconds, nanoseconds);
+
+    snprintf(buf, sizeof(buf), "%ld.%09ld", ts_.tv_sec, ts_.tv_nsec);
     return buf;
 }
 
 std::string Timestamp::ToFormattedString() const {
-    int64_t nano = nanoseconds_since_epoch_ % kNanoSecondsPerSecond;
-
-    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
-    std::tm *bt = localtime(&tt);
+    std::tm *bt = localtime(&ts_.tv_sec);
     std::ostringstream oss;
     // https://en.cppreference.com/w/cpp/io/manip/put_time
     oss << std::put_time(bt, "%F %T");
-    oss << "." << std::setfill('0') << std::setw(9) << nano;
+    oss << "." << std::setfill('0') << std::setw(9) << ts_.tv_nsec;
     return oss.str();
 }
 
 std::string Timestamp::ToFormattedMilliSecondsString() const {
-    int64_t ms = nanoseconds_since_epoch_ % kNanoSecondsPerSecond /
-                 1000000;
-
-    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
-    std::tm *bt = localtime(&tt);
+    std::tm *bt = localtime(&ts_.tv_sec);
     std::ostringstream oss;
     // https://en.cppreference.com/w/cpp/io/manip/put_time
     oss << std::put_time(bt, "%F %T");
-    oss << "." << std::setfill('0') << std::setw(3) << ms;
+    oss << "." << std::setfill('0') << std::setw(3)
+        << ts_.tv_nsec / kNanoSecondsPerMilliSecond;
     return oss.str();
 }
 
 std::string Timestamp::ToFormattedMicroSecondsString() const {
-    int64_t ms = nanoseconds_since_epoch_ % kNanoSecondsPerSecond /
-                 1000;
-
-    std::time_t tt = nanoseconds_since_epoch_ / kNanoSecondsPerSecond;
-    std::tm *bt = localtime(&tt);
+    std::tm *bt = localtime(&ts_.tv_sec);
     std::ostringstream oss;
     // https://en.cppreference.com/w/cpp/io/manip/put_time
     oss << std::put_time(bt, "%F %T");
-    oss << "." << std::setfill('0') << std::setw(6) << ms;
+    oss << "." << std::setfill('0') << std::setw(6)
+        << ts_.tv_nsec / kNanoSecondsPerMicroSecond;
     return oss.str();
 }
 
@@ -87,7 +80,7 @@ struct timespec Timestamp::TimespecNow() {
 Timestamp Timestamp::Now() {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    return FromTimespec(ts);
+    return Timestamp(ts);
 }
 
 Timestamp Timestamp::FromMicroSecondsSinceEpoch(int64_t microseconds) {
@@ -101,13 +94,8 @@ Timestamp Timestamp::FromMilliSecondsSinceEpoch(int64_t milliseconds) {
 Timestamp Timestamp::FromUTC(time_t t) { return FromUTC(t, 0); }
 
 Timestamp Timestamp::FromUTC(time_t t, int nanoseconds) {
-    return Timestamp(static_cast<int64_t>(t) * kNanoSecondsPerSecond +
-                     nanoseconds);
-}
-
-Timestamp Timestamp::FromTimespec(const struct timespec &ts) {
-    return Timestamp(static_cast<int64_t>(ts.tv_sec) * kNanoSecondsPerSecond +
-                     ts.tv_nsec);
+    struct timespec ts({t, nanoseconds});
+    return Timestamp(ts);
 }
 
 } // namespace event_loop

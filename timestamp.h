@@ -19,9 +19,12 @@ public:
     /// @param nanoseconds
     explicit Timestamp(int64_t nanoseconds);
 
+    /// @param nanoseconds
+    explicit Timestamp(const struct timespec &ts);
+
     ~Timestamp();
 
-    bool valid() const; 
+    bool valid() const;
 
     int64_t nanoseconds_since_epoch() const;
     int64_t microseconds_since_epoch() const;
@@ -47,16 +50,16 @@ public:
 
     static Timestamp FromTimespec(const struct timespec &ts);
 
+    bool operator==(const Timestamp &rhs) {
+        return ts_.tv_sec == rhs.ts_.tv_sec && ts_.tv_nsec == rhs.ts_.tv_nsec;
+    }
+
 private:
-    int64_t nanoseconds_since_epoch_;
+    struct timespec ts_;
 };
 
 inline bool operator<(const Timestamp &lhs, const Timestamp &rhs) {
     return lhs.nanoseconds_since_epoch() < rhs.nanoseconds_since_epoch();
-}
-
-inline bool operator==(const Timestamp &lhs, const Timestamp &rhs) {
-    return lhs.nanoseconds_since_epoch() == rhs.nanoseconds_since_epoch();
 }
 
 inline double operator-(const Timestamp &high, const Timestamp &low) {

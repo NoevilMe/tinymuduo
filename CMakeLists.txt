@@ -19,11 +19,11 @@ target_compile_options(eventloop PRIVATE -Wno-psabi)
 # target_link_libraries(eventloop PUBLIC rt)
 
 if(BUILD_EVENTLOOP_EXAMPLES)
-  add_executable(test example/test_timer.cxx)
-  target_link_libraries(test eventloop)
+  add_executable(test_timer example/test_timer.cxx)
+  target_link_libraries(test_timer eventloop)
 
-  add_executable(test2 example/test_timer2.cxx)
-  target_link_libraries(test2 eventloop)
+  add_executable(test_timer2 example/test_timer2.cxx)
+  target_link_libraries(test_timer2 eventloop)
 
   add_executable(test_ts example/test_timestamp.cxx)
   target_link_libraries(test_ts eventloop)
