@@ -27,6 +27,8 @@ void EventLoop::Loop() {
     }
 }
 
+void EventLoop::Quit() { quit_ = true; }
+
 void EventLoop::RunInLoop(Functor cb) {}
 
 void EventLoop::QueueInLoop(Functor cb) {}
@@ -36,7 +38,7 @@ void EventLoop::RunAt(Timestamp time, TimerCallback cb) {
 }
 
 void EventLoop::RunAfter(double delay, TimerCallback cb) {
-     return RunEveryAfter(0, delay, std::move(cb));
+    return RunEveryAfter(0, delay, std::move(cb));
 }
 
 void EventLoop::RunEvery(double interval, TimerCallback cb) {
