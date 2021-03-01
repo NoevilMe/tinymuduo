@@ -12,7 +12,7 @@ class EventLoop;
 class Channel;
 class Timestamp;
 
-class Timer : std::enable_shared_from_this<Timer> {
+class Timer : public std::enable_shared_from_this<Timer> {
 public:
     Timer(EventLoop *eventloop, TimerCallback cb, Timestamp when,
           double interval_seconds);
