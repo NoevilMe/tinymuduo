@@ -26,6 +26,10 @@ public:
 
     int fd() const { return timer_fd_; }
 
+    void Postpone(double seconds);
+
+    void PostponeAfter(double seconds);
+
 private:
     void InitTimer(double delay_seconds, double interval_seconds);
 

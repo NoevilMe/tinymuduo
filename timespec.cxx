@@ -19,6 +19,13 @@ struct timespec operator-(const struct timespec &end,
     }
 }
 
+struct timespec operator+(const struct timespec &start,
+                          const struct timespec &post) {
+    int64_t si = timespec_to_int64(start);
+    int64_t pi = timespec_to_int64(post);
+    return int64_to_timespec(pi + si);
+}
+
 struct timespec int64_to_timespec(int64_t i) {
     struct timespec t;
     t.tv_sec = i / kNanoSecondsPerSecond;

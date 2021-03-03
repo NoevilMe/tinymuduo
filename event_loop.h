@@ -44,22 +44,23 @@ public:
 
     // timers
 
-    void RunAt(Timestamp time, TimerCallback cb);
+    std::shared_ptr<Timer> RunAt(Timestamp time, TimerCallback cb);
 
-    void RunAfter(double delay, TimerCallback cb);
+    std::shared_ptr<Timer> RunAfter(double delay, TimerCallback cb);
 
-    void RunEvery(double interval, TimerCallback cb);
+    std::shared_ptr<Timer> RunEvery(double interval, TimerCallback cb);
 
-    void RunEveryAfter(double interval, double delay, TimerCallback cb);
+    std::shared_ptr<Timer> RunEveryAfter(double interval, double delay,
+                                         TimerCallback cb);
 
-    void RunEveryAt(double interval, Timestamp time, TimerCallback cb);
+    std::shared_ptr<Timer> RunEveryAt(double interval, Timestamp time,
+                                      TimerCallback cb);
 
     void RemoveTimer(int timer_fd);
 
     void UpdateChannel(Channel *channel);
     void RemoveChannel(Channel *channel);
     bool HasChannel(Channel *channel);
-
 
 private:
     std::mutex pending_functors_mutex_;

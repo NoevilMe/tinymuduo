@@ -33,28 +33,32 @@ void EventLoop::RunInLoop(Functor cb) {}
 
 void EventLoop::QueueInLoop(Functor cb) {}
 
-void EventLoop::RunAt(Timestamp time, TimerCallback cb) {
+std::shared_ptr<Timer> EventLoop::RunAt(Timestamp time, TimerCallback cb) {
     return RunEveryAt(0, time, std::move(cb));
 }
 
-void EventLoop::RunAfter(double delay, TimerCallback cb) {
+std::shared_ptr<Timer> EventLoop::RunAfter(double delay, TimerCallback cb) {
     return RunEveryAfter(0, delay, std::move(cb));
 }
 
-void EventLoop::RunEvery(double interval, TimerCallback cb) {
+std::shared_ptr<Timer> EventLoop::RunEvery(double interval, TimerCallback cb) {
     return RunEveryAfter(interval, 0, std::move(cb));
 }
 
-void EventLoop::RunEveryAfter(double interval, double delay, TimerCallback cb) {
+std::shared_ptr<Timer> EventLoop::RunEveryAfter(double interval, double delay,
+                                                TimerCallback cb) {
     std::shared_ptr<Timer> timer(
         new Timer(this, std::move(cb), delay, interval));
     timers_.insert(std::make_pair(timer->fd(), timer));
+    return timer;
 }
 
-void EventLoop::RunEveryAt(double interval, Timestamp time, TimerCallback cb) {
+std::shared_ptr<Timer> EventLoop::RunEveryAt(double interval, Timestamp time,
+                                             TimerCallback cb) {
     std::shared_ptr<Timer> timer(
         new Timer(this, std::move(cb), time, interval));
     timers_.insert(std::make_pair(timer->fd(), timer));
+    return timer;
 }
 
 void EventLoop::RemoveTimer(int timer_fd) { timers_.erase(timer_fd); }
