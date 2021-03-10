@@ -4,6 +4,8 @@
 #include "callback.h"
 #include "noncopyable.h"
 
+#include <memory>
+
 namespace muduo {
 namespace event_loop {
 
@@ -38,6 +40,10 @@ public:
 
     void SetPollEvents(int ev) { poll_events_ = ev; }
 
+    /// Tie this channel to the owner object managed by shared_ptr,
+    /// prevent the owner object being destroyed in handleEvent.
+    void Tie(const std::shared_ptr<void> &);
+
     // for Non-blocking fd
     void EnableEdgeTrigger();
     void DisableEdgeTrigger();
@@ -58,9 +64,14 @@ public:
 
 private:
     void UpdateInLoop();
+    void HandleEventWithGuard(Timestamp receiveTime);
 
     EventLoop *loop_;
     int fd_;
+
+    std::weak_ptr<void> tie_;
+    bool tied_;
+    bool event_handling_;
 
     int events_;
     ChannelState state_;

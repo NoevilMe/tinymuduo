@@ -214,7 +214,7 @@ uint8_t ProtobufCodec::NetworkAsUint8(const char *buf) {
 }
 
 void ProtobufCodec::AppendUint32(uint32_t value, std::string &data) {
-    uint32_t be32 =hostToNetwork32(value);
+    uint32_t be32 = hostToNetwork32(value);
     data.append((const char *)(&be32), sizeof(be32));
 }
 
