@@ -53,7 +53,8 @@ public:
     ProtobufCodec(const ProtobufMessageCallback &cb, const ErrorCallback &ecb);
     ~ProtobufCodec();
 
-    void OnMessageData(const std::string &data, Timestamp timestamp);
+    void OnCachedMessage(const std::string &data, Timestamp timestamp);
+    void OnCachedMessage(const char *data, int len, Timestamp timestamp);
     void OnMessage(const char *data, int len, Timestamp timestamp);
 
     static std::string ErrorCodeToString(ErrorCode code);
@@ -61,6 +62,8 @@ public:
     void PackMessage(const google::protobuf::Message &msg, std::string &bytes);
 
 private:
+    void ProcessMessage(Timestamp timestamp);
+
     // parse msg outer body
     MessagePtr ParseBody(const char *buf, int len, ErrorCode *error);
 

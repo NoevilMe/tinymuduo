@@ -45,10 +45,20 @@ ProtobufCodec::ProtobufCodec(const ProtobufMessageCallback &cb,
 
 ProtobufCodec::~ProtobufCodec() {}
 
-void ProtobufCodec::OnMessageData(const std::string &data,
-                                  Timestamp timestamp) {
-    left_data_.append(data);
+void ProtobufCodec::OnCachedMessage(const char *data, int len,
+                                    Timestamp timestamp) {
 
+    left_data_.append(data, len);
+    ProcessMessage(timestamp);
+}
+
+void ProtobufCodec::OnCachedMessage(const std::string &data,
+                                    Timestamp timestamp) {
+    left_data_.append(data);
+    ProcessMessage(timestamp);
+}
+
+void ProtobufCodec::ProcessMessage(Timestamp timestamp) {
     while (left_data_.length() >= kMinMessageBodyLen + kHeaderLen) {
         ProtoMsgHeaderType len = NetworkAsUint32(left_data_.data());
 
