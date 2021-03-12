@@ -111,7 +111,7 @@ public:
     CallbackT(const ProtobufMessageTCallback &callback) : callback_(callback) {}
 
     virtual void OnMessage(const MessagePtr &message,
-                           long long timestamp) override {
+                           Timestamp timestamp) override {
         std::shared_ptr<T> concrete = std::static_pointer_cast<T>(message);
         callback_(concrete, timestamp);
     }
