@@ -62,6 +62,14 @@ inline bool operator<(const Timestamp &lhs, const Timestamp &rhs) {
     return lhs.nanoseconds_since_epoch() < rhs.nanoseconds_since_epoch();
 }
 
+inline bool operator>(const Timestamp &lhs, const Timestamp &rhs) {
+    return lhs.nanoseconds_since_epoch() > rhs.nanoseconds_since_epoch();
+}
+
+inline bool operator!=(const Timestamp &lhs, const Timestamp &rhs) {
+    return lhs.nanoseconds_since_epoch() != rhs.nanoseconds_since_epoch();
+}
+
 inline double operator-(const Timestamp &high, const Timestamp &low) {
     int64_t diff =
         high.nanoseconds_since_epoch() - low.nanoseconds_since_epoch();
