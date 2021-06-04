@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <cstring>
+#include <iomanip>
+#include <sstream>
 
 namespace muduo {
 namespace event_loop {
@@ -16,6 +18,16 @@ struct timespec operator-(const struct timespec &end,
         return timespec({0, 0});
     } else {
         return int64_to_timespec(ei - si);
+    }
+}
+
+bool operator<(const struct timespec &lv, const struct timespec &rv) {
+    if (lv.tv_sec < rv.tv_sec) {
+        return true;
+    } else if (lv.tv_sec == rv.tv_sec) {
+        return lv.tv_nsec < rv.tv_nsec;
+    } else {
+        return false;
     }
 }
 
@@ -53,6 +65,24 @@ bool timespec_is_zero(const struct timespec &t) {
 
 int64_t timespec_to_int64(const struct timespec &t) {
     return int64_t(t.tv_sec) * kNanoSecondsPerSecond + t.tv_nsec;
+}
+
+std::string FormatMilliSencond(const struct timespec &t) {
+    std::tm *bt = localtime(&t.tv_sec);
+    std::ostringstream oss;
+    // https://en.cppreference.com/w/cpp/io/manip/put_time
+    oss << std::put_time(bt, "%F %T");
+    oss << "." << std::setfill('0') << std::setw(3) << t.tv_nsec / 1000000;
+    return oss.str();
+}
+
+std::string FormatMicroSencond(const struct timespec &t) {
+    std::tm *bt = localtime(&t.tv_sec);
+    std::ostringstream oss;
+    // https://en.cppreference.com/w/cpp/io/manip/put_time
+    oss << std::put_time(bt, "%F %T");
+    oss << "." << std::setfill('0') << std::setw(6) << t.tv_nsec / 1000;
+    return oss.str();
 }
 
 } // namespace event_loop
