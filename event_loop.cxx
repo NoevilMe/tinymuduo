@@ -63,6 +63,8 @@ std::shared_ptr<Timer> EventLoop::RunEveryAt(double interval, Timestamp time,
 
 void EventLoop::RemoveTimer(int timer_fd) { timers_.erase(timer_fd); }
 
+std::size_t EventLoop::TimerCount() { return timers_.size(); }
+
 void EventLoop::UpdateChannel(Channel *channel) {
     poller_->UpdateChannel(channel);
 }

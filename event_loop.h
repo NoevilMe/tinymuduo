@@ -57,6 +57,7 @@ public:
                                       TimerCallback cb);
 
     void RemoveTimer(int timer_fd);
+    std::size_t TimerCount();
 
     void UpdateChannel(Channel *channel);
     void RemoveChannel(Channel *channel);
