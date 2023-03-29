@@ -59,7 +59,10 @@ void Timer::ReadTimer() {
     uint64_t exp = 0;
     read(timer_fd_, &exp, sizeof(exp));
 
-    cb_();
+    try {
+        cb_();
+    } catch (...) {
+    }
 
     if (Expired()) {
         eventloop_->RemoveTimer(timer_fd_);
