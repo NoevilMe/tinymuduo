@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstring>
 #include <sys/poll.h>
+#include <unistd.h>
 
 // On Linux, the constants of poll(2) and epoll(4)
 // are expected to be the same.
@@ -18,10 +19,21 @@ static_assert(EPOLLHUP == POLLHUP, "epoll uses same flag values as poll");
 namespace muduo {
 namespace event_loop {
 
+constexpr int kEpollMaxEvents = 16;
+
 Poller::Poller(EventLoop *loop) : loop_(loop) {}
 
 EpollPoller::EpollPoller(EventLoop *loop)
-    : Poller(loop), epoll_fd_(::epoll_create1(EPOLL_CLOEXEC)), events_(16) {}
+    : Poller(loop),
+      epoll_fd_(::epoll_create1(EPOLL_CLOEXEC)),
+      events_(kEpollMaxEvents) {}
+
+EpollPoller::~EpollPoller() {
+    if (epoll_fd_ >= 0) {
+        close(epoll_fd_);
+        epoll_fd_ = -1;
+    }
+}
 
 Timestamp EpollPoller::Poll(int timeout, ChannelList *active_channels) {
     int numEvents = ::epoll_wait(epoll_fd_, &*events_.begin(),
@@ -32,7 +44,7 @@ Timestamp EpollPoller::Poll(int timeout, ChannelList *active_channels) {
     if (numEvents > 0) {
         for (int i = 0; i < numEvents; ++i) {
             Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
-            channel->SetPollEvents(events_[i].events);
+            channel->set_poll_events(events_[i].events);
             active_channels->push_back(channel);
         }
 
@@ -63,8 +75,6 @@ void EpollPoller::UpdateChannel(Channel *channel) {
         Update(EPOLL_CTL_ADD, channel);
     } else {
         // update existing one with EPOLL_CTL_MOD/DEL
-        int fd = channel->fd();
-        (void)fd;
         if (channel->IsNoneEvent()) {
             Update(EPOLL_CTL_DEL, channel);
             channel->set_state(kChannelStateDisable);
@@ -74,9 +84,18 @@ void EpollPoller::UpdateChannel(Channel *channel) {
     }
 }
 
-void EpollPoller::RemoveChannel(Channel *channel)
+void EpollPoller::Update(int operation, Channel *channel) {
+    struct epoll_event event;
+    memset(&event, 0, sizeof event);
+    event.events = channel->events();
+    event.data.ptr = channel;
+    int fd = channel->fd();
+    if (::epoll_ctl(epoll_fd_, operation, fd, &event) < 0) {
+        ; // error
+    }
+}
 
-{
+void EpollPoller::RemoveChannel(Channel *channel) {
     int fd = channel->fd();
     size_t n = channel_map_.erase(fd);
     (void)n;
@@ -88,17 +107,8 @@ void EpollPoller::RemoveChannel(Channel *channel)
     channel->set_state(kChannelStateNone);
 }
 
-bool EpollPoller::HasChannel(Channel *channel) { return false; }
-
-void EpollPoller::Update(int operation, Channel *channel) {
-    struct epoll_event event;
-    memset(&event, 0, sizeof event);
-    event.events = channel->events();
-    event.data.ptr = channel;
-    int fd = channel->fd();
-    if (::epoll_ctl(epoll_fd_, operation, fd, &event) < 0) {
-        ; // error
-    }
+bool EpollPoller::HasChannel(Channel *channel) {
+    return channel_map_.find(channel->fd()) != channel_map_.end();
 }
 
 } // namespace event_loop

@@ -16,6 +16,7 @@ Channel::Channel(EventLoop *loop, int fd)
       fd_(fd),
       tied_(false),
       event_handling_(false),
+      added_to_loop_(false),
       events_(kEventNone),
       state_(kChannelStateNone) {}
 
@@ -61,10 +62,15 @@ void Channel::DisableAll() {
     UpdateInLoop();
 }
 
+bool Channel::IsReading() const { return events_ & kEventRead; }
+
+bool Channel::IsWriting() const { return events_ & kEventWrite; }
+
+bool Channel::IsNoneEvent() const { return events_ == kEventNone; }
+
 void Channel::HandleEvent(Timestamp ts) {
-    std::shared_ptr<void> guard;
     if (tied_) {
-        guard = tie_.lock();
+        std::shared_ptr<void> guard = tie_.lock();
         if (guard) {
             HandleEventWithGuard(ts);
         }
@@ -99,20 +105,20 @@ void Channel::HandleEventWithGuard(Timestamp ts) {
     event_handling_ = false;
 }
 
-bool Channel::IsReading() const { return events_ & kEventRead; }
-
-bool Channel::IsWriting() const { return events_ & kEventWrite; }
-
-bool Channel::IsNoneEvent() const { return events_ == kEventNone; }
-
 void Channel::Tie(const std::shared_ptr<void> &obj) {
     tie_ = obj;
     tied_ = true;
 }
 
-void Channel::UpdateInLoop() { loop_->UpdateChannel(this); }
+void Channel::UpdateInLoop() {
+    added_to_loop_ = true;
+    loop_->UpdateChannel(this);
+}
 
-void Channel::RemoveFromLoop() { loop_->RemoveChannel(this); }
+void Channel::RemoveFromLoop() {
+    loop_->RemoveChannel(this);
+    added_to_loop_ = false;
+}
 
 } // namespace event_loop
 } // namespace muduo

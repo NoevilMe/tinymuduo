@@ -15,12 +15,11 @@ public:
     void Reset();
     struct timespec Elapsed();
 
-    static void SetTimespecNow(struct timespec &t);
+    static void GetMonoTimespecNow(struct timespec &t);
 
 private:
     struct timespec start_time_;
 };
-
 
 } // namespace event_loop
 } // namespace muduo

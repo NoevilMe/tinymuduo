@@ -16,24 +16,24 @@ Timestamp::Timestamp(const struct timespec &ts) : ts_(ts) {}
 
 Timestamp::~Timestamp() {}
 
-bool Timestamp::valid() const { return ts_.tv_sec > 0 && ts_.tv_nsec > 0; }
+bool Timestamp::Valid() const { return ts_.tv_sec > 0 && ts_.tv_nsec >= 0; }
 
-int64_t Timestamp::nanoseconds_since_epoch() const {
+int64_t Timestamp::NanosecondsSinceEpoch() const {
     return static_cast<int64_t>(ts_.tv_sec) * kNanoSecondsPerSecond +
            ts_.tv_nsec;
 }
 
-int64_t Timestamp::microseconds_since_epoch() const {
+int64_t Timestamp::MicrosecondsSinceEpoch() const {
     return static_cast<int64_t>(ts_.tv_sec) * kMicroSecondsPerSecond +
            ts_.tv_nsec / kNanoSecondsPerMicroSecond;
 }
 
-int64_t Timestamp::milliseconds_since_epoch() const {
+int64_t Timestamp::MillisecondsSinceEpoch() const {
     return static_cast<int64_t>(ts_.tv_sec) * kMilliSecondsPerSecond +
            ts_.tv_nsec / kNanoSecondsPerMilliSecond;
 }
 
-time_t Timestamp::seconds_since_epoch() const { return ts_.tv_sec; }
+time_t Timestamp::SecondsSinceEpoch() const { return ts_.tv_sec; }
 
 std::string Timestamp::ToString() const {
     char buf[32] = {0};
@@ -95,6 +95,10 @@ Timestamp Timestamp::FromUTC(time_t t) { return FromUTC(t, 0); }
 
 Timestamp Timestamp::FromUTC(time_t t, int nanoseconds) {
     struct timespec ts({t, nanoseconds});
+    return Timestamp(ts);
+}
+
+Timestamp Timestamp::FromTimespec(const struct timespec &ts) {
     return Timestamp(ts);
 }
 

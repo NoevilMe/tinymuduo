@@ -7,14 +7,14 @@ int main() {
 
     muduo::event_loop::EventLoop loop;
     std::cout << "start "
-              << muduo::event_loop::Timestamp::Now().milliseconds_since_epoch()
+              << muduo::event_loop::Timestamp::Now().MillisecondsSinceEpoch()
               << std::endl;
     muduo::event_loop::Timer t(
         &loop,
         []() {
             std::cout << "hello "
                       << muduo::event_loop::Timestamp::Now()
-                             .milliseconds_since_epoch()
+                             .MillisecondsSinceEpoch()
                       << std::endl;
         },
         20, 5);
@@ -24,7 +24,7 @@ int main() {
         []() {
             std::cout << "2 "
                       << muduo::event_loop::Timestamp::Now()
-                             .milliseconds_since_epoch()
+                             .MillisecondsSinceEpoch()
                       << std::endl;
         },
         5.5, 0);
@@ -34,7 +34,7 @@ int main() {
         []() {
             std::cout << "3 ----- "
                       << muduo::event_loop::Timestamp::Now()
-                             .milliseconds_since_epoch()
+                             .MillisecondsSinceEpoch()
                       << std::endl;
         },
         muduo::event_loop::Timestamp::Now() + 2, 3);

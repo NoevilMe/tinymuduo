@@ -38,6 +38,7 @@ private:
 class EpollPoller : public Poller {
 public:
     EpollPoller(EventLoop *loop);
+    ~EpollPoller();
 
     Timestamp Poll(int timeout, ChannelList *active_channels) override;
 

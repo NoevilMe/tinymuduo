@@ -46,8 +46,8 @@ void Timer::InitTimer(double delay_seconds, double interval_seconds) {
     ::timerfd_settime(timer_fd_, 0, &new_value, nullptr);
 
     timer_channel_.reset(new Channel(eventloop_, timer_fd_));
-    timer_channel_->EnableNonblockReading();
     timer_channel_->set_read_callback(std::bind(&Timer::ReadTimer, this));
+    timer_channel_->EnableNonblockReading();
 }
 
 Timer::~Timer() {

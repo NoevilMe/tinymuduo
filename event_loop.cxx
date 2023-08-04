@@ -29,9 +29,13 @@ void EventLoop::Loop() {
 
 void EventLoop::Quit() { quit_ = true; }
 
-void EventLoop::RunInLoop(Functor cb) {}
+void EventLoop::RunInLoop(Functor cb) {
+    throw std::runtime_error("RunInLoop is not implemented");
+}
 
-void EventLoop::QueueInLoop(Functor cb) {}
+void EventLoop::QueueInLoop(Functor cb) {
+    throw std::runtime_error("QueueInLoop is not implemented");
+}
 
 std::shared_ptr<Timer> EventLoop::RunAt(Timestamp time, TimerCallback cb) {
     return RunEveryAt(0, time, std::move(cb));
@@ -70,6 +74,10 @@ void EventLoop::UpdateChannel(Channel *channel) {
 }
 void EventLoop::RemoveChannel(Channel *channel) {
     poller_->RemoveChannel(channel);
+}
+
+bool EventLoop::HasChannel(Channel *channel) {
+    return poller_->HasChannel(channel);
 }
 
 } // namespace event_loop

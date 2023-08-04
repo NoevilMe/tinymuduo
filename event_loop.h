@@ -19,7 +19,7 @@ class Channel;
 class Poller;
 class Timer;
 
-class EventLoop {
+class EventLoop : public Noncopyable {
 public:
     using ChannelList = std::vector<Channel *>;
 

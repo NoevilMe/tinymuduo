@@ -6,10 +6,10 @@ using namespace muduo::event_loop;
 
 int main() {
     Timestamp ts = Timestamp::Now();
-    std::cout << "seconds: " << ts.seconds_since_epoch() << std::endl;
-    std::cout << "milliseconds: " << ts.milliseconds_since_epoch() << std::endl;
-    std::cout << "microseconds: " << ts.microseconds_since_epoch() << std::endl;
-    std::cout << "nanoseconds: " << ts.nanoseconds_since_epoch() << std::endl;
+    std::cout << "seconds: " << ts.SecondsSinceEpoch() << std::endl;
+    std::cout << "milliseconds: " << ts.MillisecondsSinceEpoch() << std::endl;
+    std::cout << "microseconds: " << ts.MicrosecondsSinceEpoch() << std::endl;
+    std::cout << "nanoseconds: " << ts.NanosecondsSinceEpoch() << std::endl;
     std::cout << "string: " << ts.ToString() << std::endl;
     std::cout << "millistring: " << ts.ToFormattedMilliSecondsString() << std::endl;
     std::cout << "microstring: " << ts.ToFormattedMicroSecondsString() << std::endl;

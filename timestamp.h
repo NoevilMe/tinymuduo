@@ -19,17 +19,17 @@ public:
     /// @param nanoseconds
     explicit Timestamp(int64_t nanoseconds);
 
-    /// @param nanoseconds
+    /// @param timespec ts
     explicit Timestamp(const struct timespec &ts);
 
     ~Timestamp();
 
-    bool valid() const;
+    bool Valid() const;
 
-    int64_t nanoseconds_since_epoch() const;
-    int64_t microseconds_since_epoch() const;
-    int64_t milliseconds_since_epoch() const;
-    time_t seconds_since_epoch() const;
+    int64_t NanosecondsSinceEpoch() const;
+    int64_t MicrosecondsSinceEpoch() const;
+    int64_t MillisecondsSinceEpoch() const;
+    time_t SecondsSinceEpoch() const;
 
     std::string ToString() const;
     std::string ToFormattedString() const;
@@ -59,29 +59,28 @@ private:
 };
 
 inline bool operator<(const Timestamp &lhs, const Timestamp &rhs) {
-    return lhs.nanoseconds_since_epoch() < rhs.nanoseconds_since_epoch();
+    return lhs.NanosecondsSinceEpoch() < rhs.NanosecondsSinceEpoch();
 }
 
 inline bool operator>(const Timestamp &lhs, const Timestamp &rhs) {
-    return lhs.nanoseconds_since_epoch() > rhs.nanoseconds_since_epoch();
+    return lhs.NanosecondsSinceEpoch() > rhs.NanosecondsSinceEpoch();
 }
 
 inline bool operator!=(const Timestamp &lhs, const Timestamp &rhs) {
-    return lhs.nanoseconds_since_epoch() != rhs.nanoseconds_since_epoch();
+    return lhs.NanosecondsSinceEpoch() != rhs.NanosecondsSinceEpoch();
 }
 
 inline double operator-(const Timestamp &high, const Timestamp &low) {
-    int64_t diff =
-        high.nanoseconds_since_epoch() - low.nanoseconds_since_epoch();
+    int64_t diff = high.NanosecondsSinceEpoch() - low.NanosecondsSinceEpoch();
     return static_cast<double>(diff) / kNanoSecondsPerSecond;
 }
 
 inline Timestamp operator+(const Timestamp &ts, double senconds) {
     int64_t delta = static_cast<int64_t>(senconds * kNanoSecondsPerSecond);
-    return Timestamp(ts.nanoseconds_since_epoch() + delta);
+    return Timestamp(ts.NanosecondsSinceEpoch() + delta);
 }
 
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* __TIMER_H_ */
+#endif /* __MUDUO_TIMESTAMP_H_ */

@@ -11,6 +11,7 @@ namespace event_loop {
 
 class EventLoop;
 
+// channel state in poller
 enum ChannelState {
     kChannelStateNone = 0,
     kChannelStateEnable,
@@ -25,7 +26,6 @@ public:
     void set_read_callback(ReadEventCallback cb) { read_cb_ = std::move(cb); }
     void set_write_callback(EventCallback cb) { write_cb_ = std::move(cb); }
     void set_close_callback(EventCallback cb) { close_cb_ = std::move(cb); }
-
     void set_error_callback(EventCallback cb) { error_cb_ = std::move(cb); }
 
     int fd() const { return fd_; }
@@ -36,9 +36,9 @@ public:
 
     int events() const { return events_; }
 
-    bool IsNoneEvent() const;
+    void set_poll_events(int ev) { poll_events_ = ev; }
 
-    void SetPollEvents(int ev) { poll_events_ = ev; }
+    bool IsNoneEvent() const;
 
     /// Tie this channel to the owner object managed by shared_ptr,
     /// prevent the owner object being destroyed in handleEvent.
@@ -69,13 +69,16 @@ private:
     EventLoop *loop_;
     int fd_;
 
+    ChannelState state_;
+    // watching events
+    int events_;
+    // occured events returned by poller
+    int poll_events_;
+
     std::weak_ptr<void> tie_;
     bool tied_;
     bool event_handling_;
-
-    int events_;
-    ChannelState state_;
-    int poll_events_;
+    bool added_to_loop_;
 
     ReadEventCallback read_cb_;
     EventCallback write_cb_;
