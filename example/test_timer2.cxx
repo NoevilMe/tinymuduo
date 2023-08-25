@@ -16,7 +16,7 @@ int main() {
             << std::endl;
     });
 
-    loop.RunAfter(2.5 ,[]() {
+    loop.RunAfter(2.5, []() {
         std::cout
             << "hello 2 ----- "
             << muduo::event_loop::Timestamp::Now().MillisecondsSinceEpoch()
