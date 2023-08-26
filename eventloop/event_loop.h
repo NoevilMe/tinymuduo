@@ -3,14 +3,17 @@
 
 #include "callback.h"
 #include "noncopyable.h"
+#include "this_thread.h"
 #include "timestamp.h"
 
+#include <atomic>
 #include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
-#include <sys/epoll.h>
 #include <vector>
+
+#include <sys/epoll.h>
 
 namespace muduo {
 namespace event_loop {
@@ -39,7 +42,14 @@ public:
     /// better to call through shared_ptr<EventLoop> for 100% safety.
     void Quit();
 
+    /// Runs callback immediately in the loop thread.
+    /// It wakes up the loop, and run the cb.
+    /// If in the same loop thread, cb is run within the function.
+    /// Safe to call from other threads.
     void RunInLoop(Functor cb);
+    /// Queues callback in the loop thread.
+    /// Runs after finish pooling.
+    /// Safe to call from other threads.
     void QueueInLoop(Functor cb);
 
     // timers
@@ -62,16 +72,45 @@ public:
     void UpdateChannel(Channel *channel);
     void RemoveChannel(Channel *channel);
     bool HasChannel(Channel *channel);
+    void Wakeup();
+
+    bool event_handling() const { return event_handling_; }
+
+    bool IsInLoopThread() const { return thread_id_ == this_thread::tid(); }
+    void AssertInLoopThread() {
+        if (!IsInLoopThread()) {
+            AbortNotInLoopThread();
+        }
+    }
+
+    static EventLoop *GetEventLoopOfThisThread();
 
 private:
+    void AbortNotInLoopThread();
+    void CallPendingFunctors();
+    void WakeUpEventRead(Timestamp); // waked up
+
+private:
+    const pid_t thread_id_;
+    bool looping_;
+    bool event_handling_;
+    std::atomic_bool quit_;
+
+    // pending functors related
+    bool calling_pending_functors_;
     std::mutex pending_functors_mutex_;
     std::vector<Functor> pending_functors_;
 
     std::unique_ptr<Poller> poller_;
-    bool quit_;
+
     ChannelList active_channels_;
     Channel *current_channel_;
     Timestamp poll_timestamp_;
+
+    int wakeup_fd_;
+    // unlike in TimerQueue, which is an internal class,
+    // we don't expose Channel to client.
+    std::unique_ptr<Channel> wakeup_channel_;
 
     std::map<int, std::shared_ptr<Timer>> timers_;
 };

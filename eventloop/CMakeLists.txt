@@ -13,10 +13,12 @@ set(LIB_SRC
     timespan.cxx
     timestamp.cxx
     timespec.cxx
+    this_thread.cxx
     proto_codec.cxx)
 
 add_library(eventloop STATIC ${LIB_SRC})
 target_compile_options(eventloop PRIVATE -Wno-psabi)
+target_include_directories(eventloop PUBLIC ${MUDUO_TOP})
 # target_link_libraries(eventloop PUBLIC rt)
 
 if(BUILD_EVENTLOOP_EXAMPLES)

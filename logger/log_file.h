@@ -9,13 +9,13 @@ namespace muduo {
 namespace log {
 
 /**
- * FileUtil：工具类，用于打开一个文件fp_，向fp_指定buffer_中写入数据，把buffer_中的数据写入文件中，在LogFile中用到
+ * FileWriter：工具类，用于打开一个文件fp_，设置全缓冲。把buffer_中的数据写入文件中，在LogFile中用到
  */
 class FileWriter {
 
 public:
     // 构造时会把文件指针fp_的缓冲区设置为本地的buffer_
-    explicit FileWriter(std::string &fileName);
+    explicit FileWriter(const std::string &fileName);
     ~FileWriter();
 
     // 向buffer_中添加数据

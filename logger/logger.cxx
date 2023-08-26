@@ -173,7 +173,7 @@ Logger::Logger(SourceFile file, int line, LogLevel level)
     : impl_(level, 0, file, line) {}
 
 Logger::Logger(SourceFile file, int line, LogLevel level, const char *func)
-    : impl_(INFO, 0, file, line) {
+    : impl_(level, 0, file, line) {
     impl_.stream_ << func << ' ';
 }
 

@@ -6,8 +6,8 @@
 namespace muduo {
 namespace log {
 
-FileWriter::FileWriter(std::string &fileName)
-    : fp_(::fopen(fileName.c_str(), "ae")), written_bytes_(0) {
+FileWriter::FileWriter(const std::string &fileName)
+    : fp_(::fopen(fileName.data(), "ae")), written_bytes_(0) {
     // ‘a’是追加，'e'表示O_CLOEXEC
     // 将fd_缓冲区设置为本地的buffer_，这样调用write的时候才会借助缓冲区，并在适当的时机写入文件
     // setvbuf(stream, buf, buf ? _IOFBF : _IONBF, BUFSIZ); 设置成全缓冲

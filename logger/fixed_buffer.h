@@ -1,8 +1,8 @@
 #ifndef B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
 #define B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
 
-#include <string>
 #include <cstring>
+#include <string>
 
 namespace muduo {
 namespace log {
@@ -36,10 +36,10 @@ public:
     }
     // 返回FixedBuffer首地址
     const char *data() const { return data_; }
+    char *current() { return cur_; }
     int Length() const { return static_cast<int>(cur_ - data_); }
 
-    char *current() { return cur_; }
-    int Avail() const { return static_cast<int>(end() - cur_); }
+    size_t Avail() const { return static_cast<size_t>(end() - cur_); }
 
     void Add(size_t len) { cur_ += len; }
     void Reset() { cur_ = data_; }

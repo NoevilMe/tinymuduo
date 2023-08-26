@@ -1,40 +1,10 @@
 #include "proto_codec.h"
+#include "endian.h"
 
 #include <zlib.h>
 
 namespace muduo {
 namespace event_loop {
-
-#ifdef __WIN32
-inline u_short networkToHost16(u_short netshort) { return ntohs(netshort); }
-
-inline u_long networkToHost32(u_long netlong) { return ntohl(netlong); }
-
-inline u_short hostToNetwork16(u_short netshort) { return htons(netshort); }
-
-inline u_long hostToNetwork32(u_long netlong) { return htonl(netlong); }
-
-inline unsigned __int64 networkToHost64(unsigned __int64 value) {
-    return ntohll(value);
-}
-
-inline unsigned __int64 hostToNetwork64(unsigned __int64 value) {
-    return htonll(value);
-}
-#else
-// refer to https://linux.die.net/man/3/be16toh
-inline uint16_t networkToHost16(uint16_t net16) { return be16toh(net16); }
-
-inline uint32_t networkToHost32(uint32_t net32) { return be32toh(net32); }
-
-inline uint16_t hostToNetwork16(uint16_t host16) { return htobe16(host16); }
-
-inline uint32_t hostToNetwork32(uint32_t host32) { return htobe32(host32); }
-
-inline uint64_t hostToNetwork64(uint64_t host64) { return htobe64(host64); }
-
-inline uint64_t networkToHost64(uint64_t net64) { return be64toh(net64); }
-#endif
 
 ProtobufCodec::ProtobufCodec(const ProtobufMessageCallback &cb)
     : message_cb_(cb), error_cb_(DefaultErrorCallback) {}
@@ -214,7 +184,7 @@ uint32_t ProtobufCodec::NetworkAsUint32(const char *buf) {
 #else
     ::memcpy(&be32, buf, sizeof(be32));
 #endif
-    return networkToHost32(be32);
+    return NetworkToHost32(be32);
 }
 
 uint8_t ProtobufCodec::NetworkAsUint8(const char *buf) {
@@ -224,12 +194,12 @@ uint8_t ProtobufCodec::NetworkAsUint8(const char *buf) {
 }
 
 void ProtobufCodec::AppendUint32(uint32_t value, std::string &data) {
-    uint32_t be32 = hostToNetwork32(value);
+    uint32_t be32 = HostToNetwork32(value);
     data.append((const char *)(&be32), sizeof(be32));
 }
 
 void ProtobufCodec::AppendUshort(unsigned short value, std::string &data) {
-    unsigned short be16 = hostToNetwork16(value);
+    unsigned short be16 = HostToNetwork16(value);
     data.append((const char *)(&be16), sizeof(be16));
 }
 
