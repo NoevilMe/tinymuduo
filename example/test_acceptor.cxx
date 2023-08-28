@@ -2,14 +2,20 @@
 #include "logger/logger.h"
 #include "net/acceptor.h"
 #include "net/inet_address.h"
+#include "net/tcp_connection.h"
+#include "net/tcp_server.h"
 
 #include <iostream>
 #include <unistd.h>
 
-void new_conn(int sockfd, const muduo::net::InetAddress &addr) {
-    LOG_INFO << "new connection from " << addr.Ip() << " port " << addr.Port()
-             << " -- " << addr.IpPort() << ", fd " << sockfd;
-    close(sockfd);
+void new_conn(const muduo::net::TcpConnectionPtr &conn) {
+    if (conn->Connected()) {
+        LOG_INFO << "new connection from " << conn->peer_addr().IpPort();
+        // close(sockfd);
+        conn->Shutdown();
+    } else {
+        LOG_INFO << "destory connection from " << conn->peer_addr().IpPort();
+    }
 }
 
 int main() {
@@ -18,11 +24,10 @@ int main() {
 
     muduo::net::InetAddress addr(38880);
 
-    muduo::net::Acceptor acpt(&loop, addr, true);
-    acpt.set_new_connection_callback(
-        std::bind(new_conn, std::placeholders::_1, std::placeholders::_2));
+    muduo::net::TcpServer acpt(&loop, addr, "Sample Tcp Server");
+    acpt.set_connection_callback(std::bind(new_conn, std::placeholders::_1));
 
-    acpt.Listen();
+    acpt.Start();
 
     loop.Loop();
 

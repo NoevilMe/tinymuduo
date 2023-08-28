@@ -50,8 +50,8 @@ void Acceptor::HandleRead(event_loop::Timestamp) {
     if (connfd >= 0) {
         // string hostport = peerAddr.toIpPort();
         // LOG_TRACE << "Accepts of " << hostport;
-        if (new_conn_cb_) {
-            new_conn_cb_(connfd, peerAddr);
+        if (new_connection_callback_) {
+            new_connection_callback_(connfd, peerAddr);
         } else {
             sockets::Close(connfd);
         }

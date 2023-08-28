@@ -28,6 +28,12 @@ int Socket::Accept(InetAddress *peeraddr) {
     return connfd;
 }
 
+void Socket::ShutdownWrite() {
+    if (::shutdown(sock_fd_, SHUT_WR) < 0) {
+        LOG_SYSERR << "Socket::ShutdownWrite";
+    }
+}
+
 void Socket::SetReuseAddr(bool on) {
     int optval = on ? 1 : 0;
     ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &optval,
@@ -129,6 +135,16 @@ void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr) {
     if (::inet_pton(AF_INET6, ip, &addr->sin6_addr) <= 0) {
         LOG_SYSERR << "sockets::FromIpPort";
     }
+}
+
+struct sockaddr_in6 GetLocalAddr(int sockfd) {
+    struct sockaddr_in6 local_addr;
+    mem_zero(&local_addr, sizeof(local_addr));
+    socklen_t addrlen = static_cast<socklen_t>(sizeof(local_addr));
+    if (::getsockname(sockfd, (struct sockaddr *)(&local_addr), &addrlen) < 0) {
+        LOG_SYSERR << "sockets::GetLocalAddr";
+    }
+    return local_addr;
 }
 
 void ToIp(char *buf, size_t size, const struct sockaddr *addr) {

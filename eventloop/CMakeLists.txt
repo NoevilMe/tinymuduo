@@ -14,7 +14,8 @@ set(LIB_SRC
     timestamp.cxx
     timespec.cxx
     this_thread.cxx
-    proto_codec.cxx)
+    proto_codec.cxx
+    event_loop_thread.cxx event_loop_threadpool.cxx)
 
 add_library(eventloop STATIC ${LIB_SRC})
 target_compile_options(eventloop PRIVATE -Wno-psabi)

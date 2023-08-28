@@ -40,7 +40,7 @@ public:
     /// On error, -1 is returned, and *peeraddr is untouched.
     int Accept(InetAddress *peeraddr);
 
-    // void shutdownWrite();
+    void ShutdownWrite();
 
     ///
     /// Enable/disable TCP_NODELAY (disable/enable Nagle's algorithm).
@@ -96,7 +96,7 @@ void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr);
 // const struct sockaddr_in *sockaddr_in_cast(const struct sockaddr *addr);
 // const struct sockaddr_in6 *sockaddr_in6_cast(const struct sockaddr *addr);
 
-// struct sockaddr_in6 getLocalAddr(int sockfd);
+struct sockaddr_in6 GetLocalAddr(int sockfd);
 // struct sockaddr_in6 getPeerAddr(int sockfd);
 // bool isSelfConnect(int sockfd);
 } // namespace sockets

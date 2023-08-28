@@ -33,7 +33,7 @@ public:
     ~Acceptor();
 
     void set_new_connection_callback(const NewConnectionCallback &cb) {
-        new_conn_cb_ = cb;
+        new_connection_callback_ = cb;
     }
 
     void Listen();
@@ -47,7 +47,7 @@ private:
     InetAddress serv_address_;
     Socket accept_socket_;
     std::unique_ptr<event_loop::Channel> accept_channel_;
-    NewConnectionCallback new_conn_cb_;
+    NewConnectionCallback new_connection_callback_;
     bool listening_;
     int idle_fd_;
 };
