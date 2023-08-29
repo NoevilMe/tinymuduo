@@ -3,7 +3,10 @@
 
 #include <algorithm>
 #include <cstring>
+#include <string>
 #include <vector>
+
+#include <assert.h>
 
 namespace muduo {
 namespace net {
@@ -35,12 +38,56 @@ public:
 
     size_t PrependableBytes() const { return reader_index_; }
 
-    const char *peek() const { return begin() + reader_index_; }
+    void EnsureWritableBytes(size_t len);
+    void MakeSpace(size_t len);
+
+    const char *Peek() const { return begin() + reader_index_; }
+
+    ssize_t ReadFd(int fd, int *saved_errno);
+
+    void Append(const char *data, size_t len);
+
+    std::string RetrieveAllAsString() {
+        return RetrieveAsString(ReadableBytes());
+    }
+
+    std::string RetrieveAsString(size_t len) {
+        assert(len <= ReadableBytes());
+        std::string result(Peek(), len);
+        Retrieve(len);
+        return result;
+    }
+
+    // retrieve returns void, to prevent
+    // string str(retrieve(readableBytes()), readableBytes());
+    // the evaluation of two functions are unspecified
+    void Retrieve(size_t len) {
+        assert(len <= ReadableBytes());
+        if (len < ReadableBytes()) {
+            reader_index_ += len;
+        } else {
+            RetrieveAll();
+        }
+    }
+
+    void RetrieveAll() {
+        reader_index_ = kCheapPrepend;
+        writer_index_ = kCheapPrepend;
+    }
 
 private:
     char *begin() { return &*buffer_.begin(); }
 
     const char *begin() const { return &*buffer_.begin(); }
+
+    char *BeginWrite() { return begin() + writer_index_; }
+
+    const char *BeginWrite() const { return begin() + writer_index_; }
+
+    void HasWritten(size_t len) {
+        assert(len <= WritableBytes());
+        writer_index_ += len;
+    }
 
 private:
     std::vector<char> buffer_;

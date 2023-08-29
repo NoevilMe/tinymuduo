@@ -45,7 +45,7 @@ public:
     ///
     /// Enable/disable TCP_NODELAY (disable/enable Nagle's algorithm).
     ///
-    // void setTcpNoDelay(bool on);
+    void SetTcpNoDelay(bool on);
 
     ///
     /// Enable/disable SO_REUSEADDR
@@ -60,7 +60,7 @@ public:
     ///
     /// Enable/disable SO_KEEPALIVE
     ///
-    // void setKeepAlive(bool on);
+    void SetKeepAlive(bool on);
 
 private:
     const int sock_fd_;
@@ -78,7 +78,7 @@ void ListenOrDie(int sockfd);
 int Accept(int sockfd, struct sockaddr_in6 *addr);
 // ssize_t read(int sockfd, void *buf, size_t count);
 // ssize_t readv(int sockfd, const struct iovec *iov, int iovcnt);
-// ssize_t write(int sockfd, const void *buf, size_t count);
+ssize_t Write(int sockfd, const void *buf, size_t count);
 void Close(int sockfd);
 // void shutdownWrite(int sockfd);
 
@@ -88,7 +88,7 @@ void ToIp(char *buf, size_t size, const struct sockaddr *addr);
 void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in *addr);
 void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr);
 
-// int getSocketError(int sockfd);
+int GetSocketErrno(int sockfd);
 
 // const struct sockaddr *sockaddr_cast(const struct sockaddr_in *addr);
 // const struct sockaddr *sockaddr_cast(const struct sockaddr_in6 *addr);

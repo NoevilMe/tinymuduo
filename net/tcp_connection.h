@@ -1,6 +1,7 @@
 #ifndef D1907193_EA1E_4678_B647_A35BF93C5BCC
 #define D1907193_EA1E_4678_B647_A35BF93C5BCC
 
+#include "buffer.h"
 #include "callback.h"
 #include "eventloop/eventloop.h"
 #include "inet_address.h"
@@ -24,20 +25,27 @@ public:
     const InetAddress &local_addr() const { return local_addr_; }
     const InetAddress &peer_addr() const { return peer_addr_; }
 
+    void Send(const void *data, int len);
+    void Send(const std::string &message);
+
     void Shutdown(); // NOT thread safe, no simultaneous calling
 
     bool Connected() const { return state_ == kConnected; }
     bool Disconnected() const { return state_ == kDisconnected; }
 
-    // executed when connection is established
+    void SetTcpNoDelay(bool on);
+
+    // 连接建立和断开的时候回调
     void set_connection_callback(const ConnectionCallback &cb) {
         connection_callback_ = cb;
     }
 
+    // 收到消息
     void set_message_callback(const MessageCallback &cb) {
         message_callback_ = cb;
     }
 
+    // 发送数据完毕
     void set_write_complete_callback(const WriteCompleteCallback &cb) {
         write_complete_callback_ = cb;
     }
@@ -61,6 +69,8 @@ private:
     void SetState(ConnectionState s) { state_ = s; }
 
     void ShutdownInLoop();
+    void SendInLoop(const std::string &message);
+    void SendInLoop(const void *message, size_t len);
 
     void HandleRead(event_loop::Timestamp poll_time);
     void HandleWrite();
@@ -82,6 +92,9 @@ private:
     MessageCallback message_callback_;
     WriteCompleteCallback write_complete_callback_;
     CloseCallback close_callback_;
+
+    Buffer receive_buffer_;
+    Buffer send_buffer_; // FIXME: use list<Buffer> as output buffer.
 };
 
 } // namespace net

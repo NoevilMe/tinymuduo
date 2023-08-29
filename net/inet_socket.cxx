@@ -5,6 +5,7 @@
 
 #include <arpa/inet.h>
 #include <assert.h>
+#include <netinet/tcp.h>
 #include <unistd.h>
 
 namespace muduo {
@@ -34,6 +35,13 @@ void Socket::ShutdownWrite() {
     }
 }
 
+void Socket::SetTcpNoDelay(bool on) {
+    int optval = on ? 1 : 0;
+    ::setsockopt(sock_fd_, IPPROTO_TCP, TCP_NODELAY, &optval,
+                 static_cast<socklen_t>(sizeof optval));
+    // FIXME CHECK
+}
+
 void Socket::SetReuseAddr(bool on) {
     int optval = on ? 1 : 0;
     ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &optval,
@@ -47,6 +55,12 @@ void Socket::SetReusePort(bool on) {
     if (ret < 0 && on) {
         LOG_SYSERR << "SO_REUSEPORT failed.";
     }
+}
+
+void Socket::SetKeepAlive(bool on) {
+    int optval = on ? 1 : 0;
+    ::setsockopt(sock_fd_, SOL_SOCKET, SO_KEEPALIVE, &optval,
+                 static_cast<socklen_t>(sizeof optval));
 }
 
 namespace sockets {
@@ -115,6 +129,10 @@ int Accept(int sockfd, struct sockaddr_in6 *addr) {
     return connfd;
 }
 
+ssize_t Write(int sockfd, const void *buf, size_t count) {
+    return ::write(sockfd, buf, count);
+}
+
 void Close(int sockfd) {
     if (::close(sockfd) < 0) {
         LOG_SYSERR << "sockets::close";
@@ -134,6 +152,17 @@ void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr) {
     addr->sin6_port = HostToNetwork16(port);
     if (::inet_pton(AF_INET6, ip, &addr->sin6_addr) <= 0) {
         LOG_SYSERR << "sockets::FromIpPort";
+    }
+}
+
+int GetSocketErrno(int sockfd) {
+    int optval;
+    socklen_t optlen = static_cast<socklen_t>(sizeof(optval));
+
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+        return errno;
+    } else {
+        return optval;
     }
 }
 
