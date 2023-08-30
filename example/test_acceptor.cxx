@@ -38,6 +38,8 @@ int main() {
                                         std::placeholders::_2,
                                         std::placeholders::_3));
 
+    acpt.SetThreadNum(5);
+
     acpt.Start();
 
     loop.Loop();

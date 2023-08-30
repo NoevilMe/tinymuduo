@@ -1,7 +1,6 @@
 #include "inet_address.h"
 #include "eventloop/endian.h"
 #include "inet_socket.h"
-#include "mem.h"
 
 #include <cstring>
 
@@ -10,13 +9,13 @@ namespace net {
 
 InetAddress::InetAddress(uint16_t port, bool loopback_only, bool ipv6) {
     if (ipv6) {
-        mem_zero(&addr6_, sizeof(addr6_));
+        ::bzero(&addr6_, sizeof(addr6_));
         addr6_.sin6_family = AF_INET6;
         addr6_.sin6_addr = loopback_only ? in6addr_loopback : in6addr_any;
         addr6_.sin6_port = HostToNetwork16(port);
 
     } else {
-        mem_zero(&addr_, sizeof(addr_));
+        ::bzero(&addr_, sizeof(addr_));
         addr_.sin_family = AF_INET;
         addr_.sin_addr.s_addr =
             HostToNetwork32(loopback_only ? INADDR_LOOPBACK : INADDR_ANY);
@@ -26,10 +25,10 @@ InetAddress::InetAddress(uint16_t port, bool loopback_only, bool ipv6) {
 
 InetAddress::InetAddress(const std::string &ip, uint16_t port, bool ipv6) {
     if (ipv6 || ip.find(':') != std::string::npos) {
-        mem_zero(&addr6_, sizeof(addr6_));
+        ::bzero(&addr6_, sizeof(addr6_));
         sockets::FromIpPort(ip.data(), port, &addr6_);
     } else {
-        mem_zero(&addr_, sizeof(addr_));
+        ::bzero(&addr_, sizeof(addr_));
         sockets::FromIpPort(ip.data(), port, &addr_);
     }
 }

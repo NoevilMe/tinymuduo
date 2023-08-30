@@ -1,7 +1,6 @@
 #include "inet_socket.h"
 #include "eventloop/endian.h"
 #include "logger/logger.h"
-#include "mem.h"
 
 #include <arpa/inet.h>
 #include <assert.h>
@@ -21,7 +20,7 @@ void Socket::Listen() { sockets::ListenOrDie(sock_fd_); }
 
 int Socket::Accept(InetAddress *peeraddr) {
     struct sockaddr_in6 addr;
-    mem_zero(&addr, sizeof addr);
+    ::bzero(&addr, sizeof(addr));
     int connfd = sockets::Accept(sock_fd_, &addr);
     if (connfd >= 0) {
         peeraddr->SetSockAddrInet6(addr);
@@ -168,7 +167,7 @@ int GetSocketErrno(int sockfd) {
 
 struct sockaddr_in6 GetLocalAddr(int sockfd) {
     struct sockaddr_in6 local_addr;
-    mem_zero(&local_addr, sizeof(local_addr));
+    ::bzero(&local_addr, sizeof(local_addr));
     socklen_t addrlen = static_cast<socklen_t>(sizeof(local_addr));
     if (::getsockname(sockfd, (struct sockaddr *)(&local_addr), &addrlen) < 0) {
         LOG_SYSERR << "sockets::GetLocalAddr";

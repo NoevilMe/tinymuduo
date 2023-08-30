@@ -9,6 +9,25 @@ namespace log {
 const char g_digits[] = "9876543210123456789";
 const char *g_zero = g_digits + 9;
 
+const char digitsHex[] = "0123456789ABCDEF";
+static_assert(sizeof(digitsHex) == 17, "wrong number of digitsHex");
+
+size_t ConvertHex(char buf[], uintptr_t value) {
+    uintptr_t i = value;
+    char *p = buf;
+
+    do {
+        int lsd = static_cast<int>(i % 16);
+        i /= 16;
+        *p++ = digitsHex[lsd];
+    } while (i != 0);
+
+    *p = '\0';
+    std::reverse(buf, p);
+
+    return p - buf;
+}
+
 LogStream &LogStream::operator<<(bool v) {
     buffer_.Append(v ? "1" : "0", 1);
     return *this;
@@ -59,7 +78,17 @@ LogStream &LogStream::operator<<(char v) {
     buffer_.Append(&v, 1);
     return *this;
 }
-LogStream &LogStream::operator<<(const void *p) { return *this; }
+LogStream &LogStream::operator<<(const void *p) {
+    uintptr_t v = reinterpret_cast<uintptr_t>(p);
+    if (buffer_.Avail() >= kMaxNumericSize) {
+        char *buf = buffer_.current();
+        buf[0] = '0';
+        buf[1] = 'x';
+        size_t len = ConvertHex(buf + 2, v);
+        buffer_.Add(len + 2);
+    }
+    return *this;
+}
 LogStream &LogStream::operator<<(const char *str) {
     if (str) {
         buffer_.Append(str, strlen(str));

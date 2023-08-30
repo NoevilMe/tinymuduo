@@ -10,6 +10,8 @@ TcpServer::TcpServer(event_loop::EventLoop *loop,
     : loop_(loop),
       name_(name),
       listen_ip_port_(listen_addr.IpPort()),
+      started_(false),
+      thread_pool_(new event_loop::EventLoopThreadPool(loop, name_)),
       acceptor_(new Acceptor(loop, listen_addr, reuse_port)),
       next_conn_id_(1) {
     acceptor_->set_new_connection_callback(
@@ -28,15 +30,24 @@ TcpServer::~TcpServer() {
     }
 }
 
+void TcpServer::SetThreadNum(int threads) {
+    assert(0 <= threads);
+    thread_pool_->SetThreadNum(threads);
+}
+
 void TcpServer::Start() {
-    assert(!acceptor_->listening());
-    loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
+    if (started_.exchange(true) == false) {
+        thread_pool_->Start(thread_init_callback_);
+
+        assert(!acceptor_->listening());
+        loop_->RunInLoop(std::bind(&Acceptor::Listen, acceptor_.get()));
+    }
 }
 
 void TcpServer::NewConnection(int sockfd, const InetAddress &peer_addr) {
     loop_->AssertInLoopThread();
 
-    // EventLoop *ioLoop = threadPool_->getNextLoop();
+    auto ioloop = thread_pool_->GetNextLoop();
     char buf[64];
     snprintf(buf, sizeof buf, "-%s#%d", listen_ip_port_.data(), next_conn_id_);
     ++next_conn_id_;
@@ -49,7 +60,7 @@ void TcpServer::NewConnection(int sockfd, const InetAddress &peer_addr) {
     // // FIXME poll with zero timeout to double confirm the new connection
     // // FIXME use make_shared if necessary
     TcpConnectionPtr conn(
-        new TcpConnection(loop_, conn_name, sockfd, local_addr, peer_addr));
+        new TcpConnection(ioloop, conn_name, sockfd, local_addr, peer_addr));
     connections_[conn_name] = conn;
     conn->set_connection_callback(connection_callback_);
     conn->set_message_callback(message_callback_);
@@ -57,9 +68,7 @@ void TcpServer::NewConnection(int sockfd, const InetAddress &peer_addr) {
     conn->set_close_callback(std::bind(&TcpServer::RemoveConnection, this,
                                        std::placeholders::_1)); // FIXME: unsafe
 
-    // TODO: fix in other loop
-    // ioLoop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
-    loop_->RunInLoop(std::bind(&TcpConnection::ConnectEstablished, conn));
+    ioloop->RunInLoop(std::bind(&TcpConnection::ConnectEstablished, conn));
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
