@@ -6,6 +6,8 @@
 namespace muduo {
 namespace net {
 
+const char Buffer::kCRLF[] = "\r\n";
+
 ssize_t Buffer::ReadFd(int fd, int *saved_errno) {
 
     // saved an ioctl()/FIONREAD call to tell how much to read

@@ -43,14 +43,17 @@ public:
     void Start();
 
     /// Not thread safe.
+    /// 连接建立和断开时候调用
     void set_connection_callback(const ConnectionCallback &cb) {
         connection_callback_ = cb;
     }
     /// Not thread safe.
+    /// 连接消息到达
     void set_message_callback(const MessageCallback &cb) {
         message_callback_ = cb;
     }
     /// Not thread safe.
+    /// 连接数据发送完毕
     void set_write_complete_callback(const WriteCompleteCallback &cb) {
         write_complete_callback_ = cb;
     }

@@ -43,6 +43,20 @@ public:
 
     const char *Peek() const { return begin() + reader_index_; }
 
+    const char *FindCRLF() const {
+        // FIXME: replace with memmem()?
+        const char *crlf = std::search(Peek(), BeginWrite(), kCRLF, kCRLF + 2);
+        return crlf == BeginWrite() ? nullptr : crlf;
+    }
+
+    const char *FindCRLF(const char *start) const {
+        assert(Peek() <= start);
+        assert(start <= BeginWrite());
+        // FIXME: replace with memmem()?
+        const char *crlf = std::search(start, BeginWrite(), kCRLF, kCRLF + 2);
+        return crlf == BeginWrite() ? nullptr : crlf;
+    }
+
     ssize_t ReadFd(int fd, int *saved_errno);
 
     void Append(const char *data, size_t len);
@@ -56,6 +70,12 @@ public:
         std::string result(Peek(), len);
         Retrieve(len);
         return result;
+    }
+
+    void RetrieveUntil(const char *end) {
+        assert(Peek() <= end);
+        assert(end <= BeginWrite());
+        Retrieve(end - Peek());
     }
 
     // retrieve returns void, to prevent
@@ -93,6 +113,8 @@ private:
     std::vector<char> buffer_;
     std::size_t reader_index_;
     std::size_t writer_index_;
+
+    static const char kCRLF[];
 };
 } // namespace net
 } // namespace muduo

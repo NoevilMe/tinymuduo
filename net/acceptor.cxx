@@ -39,7 +39,7 @@ void Acceptor::Listen() {
     listening_ = true;
     accept_socket_.Listen();
     accept_channel_->EnableReading();
-    LOG_DEBUG << this << "Listening on port " << serv_address_.Port();
+    LOG_DEBUG << this << " is listening on port " << serv_address_.Port();
 }
 
 void Acceptor::HandleRead(event_loop::Timestamp) {
