@@ -35,7 +35,12 @@ public:
 
     void SetTcpNoDelay(bool on);
 
-    // 连接建立和断开的时候回调
+    // 连接已经建立，但是还没开始读取数据（可以用来设置message callback等）
+    void set_before_reading_callback(const BeforeReadingCallback &cb) {
+        before_reading_callback_ = cb;
+    }
+
+    // 连接建立（已经开始读取数据）和断开的时候回调
     void set_connection_callback(const ConnectionCallback &cb) {
         connection_callback_ = cb;
     }
@@ -88,6 +93,7 @@ private:
     std::unique_ptr<Socket> socket_;
     std::unique_ptr<event_loop::Channel> channel_;
 
+    BeforeReadingCallback before_reading_callback_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     WriteCompleteCallback write_complete_callback_;

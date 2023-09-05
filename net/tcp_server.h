@@ -43,6 +43,12 @@ public:
     void Start();
 
     /// Not thread safe.
+    /// 连接建立, 读取数据之前调用
+    void set_before_reading_callback(const BeforeReadingCallback &cb) {
+        before_reading_callback_ = cb;
+    }
+
+    /// Not thread safe.
     /// 连接建立和断开时候调用
     void set_connection_callback(const ConnectionCallback &cb) {
         connection_callback_ = cb;
@@ -77,6 +83,7 @@ private:
 
     std::string listen_ip_port_;
 
+    BeforeReadingCallback before_reading_callback_;
     ConnectionCallback connection_callback_;
     MessageCallback message_callback_;
     WriteCompleteCallback write_complete_callback_;

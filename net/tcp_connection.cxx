@@ -197,6 +197,10 @@ void TcpConnection::ConnectEstablished() {
     loop_->AssertInLoopThread();
     assert(state_ == kConnecting);
     SetState(kConnected);
+
+    if (before_reading_callback_)
+        before_reading_callback_(shared_from_this());
+
     channel_->Tie(shared_from_this());
     channel_->EnableReading();
 

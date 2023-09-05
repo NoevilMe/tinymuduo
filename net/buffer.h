@@ -95,6 +95,20 @@ public:
         writer_index_ = kCheapPrepend;
     }
 
+    /// @brief 接收以\r\n结尾的第一行数据，
+    /// @param include_crlf 返回值是否包含行尾标志\r\n
+    /// @param out_line 返回字符串
+    /// @return 是否成功
+    bool RetrieveCRLFLine(bool include_crlf, std::string &out_line) {
+        const char *first_crlf = FindCRLF();
+        if (!first_crlf)
+            return false;
+
+        out_line.assign(Peek(), include_crlf ? first_crlf + 2 : first_crlf);
+        RetrieveUntil(first_crlf + 2);
+        return true;
+    }
+
 private:
     char *begin() { return &*buffer_.begin(); }
 

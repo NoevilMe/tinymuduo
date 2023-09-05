@@ -62,12 +62,14 @@ void TcpServer::NewConnection(int sockfd, const InetAddress &peer_addr) {
     TcpConnectionPtr conn(
         new TcpConnection(ioloop, conn_name, sockfd, local_addr, peer_addr));
     connections_[conn_name] = conn;
+    conn->set_before_reading_callback(before_reading_callback_);
     conn->set_connection_callback(connection_callback_);
     conn->set_message_callback(message_callback_);
     conn->set_write_complete_callback(write_complete_callback_);
     conn->set_close_callback(std::bind(&TcpServer::RemoveConnection, this,
                                        std::placeholders::_1)); // FIXME: unsafe
 
+    // 开始接收数据
     ioloop->RunInLoop(std::bind(&TcpConnection::ConnectEstablished, conn));
 }
 
