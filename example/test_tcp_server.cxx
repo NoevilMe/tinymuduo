@@ -32,15 +32,15 @@ int main() {
 
     muduo::net::InetAddress addr(38880);
 
-    muduo::net::TcpServer acpt(&loop, addr, "Sample Tcp Server");
-    acpt.set_connection_callback(std::bind(new_conn, std::placeholders::_1));
-    acpt.set_message_callback(std::bind(on_message, std::placeholders::_1,
-                                        std::placeholders::_2,
-                                        std::placeholders::_3));
+    muduo::net::TcpServer server(&loop, addr, "Sample Tcp Server");
+    server.set_connection_callback(std::bind(new_conn, std::placeholders::_1));
+    server.set_message_callback(std::bind(on_message, std::placeholders::_1,
+                                          std::placeholders::_2,
+                                          std::placeholders::_3));
 
-    acpt.SetThreadNum(5);
+    server.SetThreadNum(5);
 
-    acpt.Start();
+    server.Start();
 
     loop.Loop();
 

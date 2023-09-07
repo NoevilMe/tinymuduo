@@ -16,6 +16,10 @@ void Socket::BindAddress(const InetAddress &addr) {
     sockets::BindOrDie(sock_fd_, addr.GetSockAddr());
 }
 
+bool Socket::BindAddressAlive(const InetAddress &addr) {
+    return sockets::Bind(sock_fd_, addr.GetSockAddr());
+}
+
 void Socket::Listen() { sockets::ListenOrDie(sock_fd_); }
 
 int Socket::Accept(InetAddress *peeraddr) {
@@ -70,6 +74,12 @@ int CreateNonblockingOrDie(sa_family_t family) {
         LOG_SYSFATAL << "sockets::createNonblockingOrDie";
     }
     return fd;
+}
+
+bool Bind(int sockfd, const struct sockaddr *addr) {
+    int ret = ::bind(sockfd, addr,
+                     static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+    return ret == 0;
 }
 
 void BindOrDie(int sockfd, const struct sockaddr *addr) {
@@ -132,6 +142,12 @@ ssize_t Write(int sockfd, const void *buf, size_t count) {
     return ::write(sockfd, buf, count);
 }
 
+ssize_t SendTo(int sockfd, const void *buf, size_t count,
+               const struct sockaddr *addr) {
+    socklen_t addrlen = static_cast<socklen_t>(sizeof(struct sockaddr_in6));
+    return ::sendto(sockfd, buf, count, 0, addr, addrlen);
+}
+
 void Close(int sockfd) {
     if (::close(sockfd) < 0) {
         LOG_SYSERR << "sockets::close";
@@ -175,6 +191,11 @@ struct sockaddr_in6 GetLocalAddr(int sockfd) {
     return local_addr;
 }
 
+int CreateNonblockingUdp(sa_family_t family) {
+    return ::socket(family, SOCK_DGRAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
+                    IPPROTO_UDP);
+}
+
 void ToIp(char *buf, size_t size, const struct sockaddr *addr) {
     if (addr->sa_family == AF_INET) {
         assert(size >= INET_ADDRSTRLEN);
@@ -206,6 +227,18 @@ void ToIpPort(char *buf, size_t size, const struct sockaddr *addr) {
         assert(size > end);
         snprintf(buf + end, size - end, ":%u", port);
     }
+}
+
+std::string ToIpPort(const struct sockaddr *addr) {
+    char buf[64] = {0};
+    ToIpPort(buf, sizeof(buf), addr);
+    return buf;
+}
+
+std::string ToIp(const struct sockaddr *addr) {
+    char buf[64] = {0};
+    ToIp(buf, sizeof(buf), addr);
+    return buf;
 }
 
 } // namespace sockets

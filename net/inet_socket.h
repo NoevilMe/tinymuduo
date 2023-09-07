@@ -31,6 +31,8 @@ public:
     /// abort if address in use
     void BindAddress(const InetAddress &addr);
 
+    bool BindAddressAlive(const InetAddress &addr);
+
     /// abort if address in use
     void Listen();
 
@@ -72,18 +74,28 @@ namespace sockets {
 /// abort if any error.
 int CreateNonblockingOrDie(sa_family_t family);
 
+bool Bind(int sockfd, const struct sockaddr *addr);
+
 // int connect(int sockfd, const struct sockaddr *addr);
 void BindOrDie(int sockfd, const struct sockaddr *addr);
 void ListenOrDie(int sockfd);
+
 int Accept(int sockfd, struct sockaddr_in6 *addr);
 // ssize_t read(int sockfd, void *buf, size_t count);
 // ssize_t readv(int sockfd, const struct iovec *iov, int iovcnt);
+
 ssize_t Write(int sockfd, const void *buf, size_t count);
+ssize_t SendTo(int sockfd, const void *buf, size_t count,
+               const struct sockaddr *addr);
+
 void Close(int sockfd);
 // void shutdownWrite(int sockfd);
 
 void ToIpPort(char *buf, size_t size, const struct sockaddr *addr);
 void ToIp(char *buf, size_t size, const struct sockaddr *addr);
+
+std::string ToIpPort(const struct sockaddr *addr);
+std::string ToIp(const struct sockaddr *addr);
 
 void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in *addr);
 void FromIpPort(const char *ip, uint16_t port, struct sockaddr_in6 *addr);
@@ -99,6 +111,11 @@ int GetSocketErrno(int sockfd);
 struct sockaddr_in6 GetLocalAddr(int sockfd);
 // struct sockaddr_in6 getPeerAddr(int sockfd);
 // bool isSelfConnect(int sockfd);
+
+///
+/// Creates a non-blocking udp socket file descriptor,
+int CreateNonblockingUdp(sa_family_t family);
+
 } // namespace sockets
 } // namespace net
 } // namespace muduo

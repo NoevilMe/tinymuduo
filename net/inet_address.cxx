@@ -51,5 +51,11 @@ std::string InetAddress::IpPort() const {
 
 uint16_t InetAddress::Port() const { return NetworkToHost16(PortNetEndian()); }
 
+bool InetAddress::MatchIp(const struct sockaddr_in6 &addr6) {
+    // TODO: fix family
+    return addr_.sin_addr.s_addr ==
+           ((struct sockaddr_in *)&addr6)->sin_addr.s_addr;
+}
+
 } // namespace net
 } // namespace muduo

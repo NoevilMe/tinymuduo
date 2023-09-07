@@ -82,21 +82,29 @@ void Channel::HandleEvent(Timestamp ts) {
 void Channel::HandleEventWithGuard(Timestamp ts) {
     event_handling_ = true;
 
+    // EPOLLIN： 表示对应的文件描述符可以读；
+    // EPOLLHUP： 表示对应的文件描述符被挂断；
+    // 当对方读写端都关闭，我方触发EPOLLHUP事件
     if ((poll_events_ & EPOLLHUP) && !(poll_events_ & EPOLLIN)) {
         if (close_cb_)
             close_cb_();
     }
 
+    // EPOLLERR： 表示对应的文件描述符发生错误；
     if (poll_events_ & EPOLLERR) {
         if (error_cb_)
             error_cb_();
     }
 
+    // EPOLLIN： 表示对应的文件描述符可以读；
+    // EPOLLPRI： 表示对应的文件描述符有紧急的数据可读
+    // 当对方关闭写端时shutdown(SHUT_WR)，我方触发EPOLLRDHUP事件。
     if (poll_events_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
         if (read_cb_)
             read_cb_(ts);
     }
 
+    // EPOLLOUT： 表示对应的文件描述符可以写
     if (poll_events_ & EPOLLOUT) {
         if (write_cb_)
             write_cb_();

@@ -1,11 +1,12 @@
-#ifndef CDF63D07_06D4_45B3_8D3E_26B7DA494D51
-#define CDF63D07_06D4_45B3_8D3E_26B7DA494D51
+#ifndef __MUDUO_NET_BUFFER_H_
+#define __MUDUO_NET_BUFFER_H_
 
 #include <algorithm>
 #include <cstring>
 #include <string>
 #include <vector>
 
+#include <arpa/inet.h>
 #include <assert.h>
 
 namespace muduo {
@@ -41,6 +42,11 @@ public:
     void EnsureWritableBytes(size_t len);
     void MakeSpace(size_t len);
 
+    void Unwrite(size_t len) {
+        assert(len <= ReadableBytes());
+        writer_index_ -= len;
+    }
+
     const char *Peek() const { return begin() + reader_index_; }
 
     const char *FindCRLF() const {
@@ -58,6 +64,8 @@ public:
     }
 
     ssize_t ReadFd(int fd, int *saved_errno);
+
+    ssize_t ReadFd(int fd, int *saved_errno, struct sockaddr_in6 *peer);
 
     void Append(const char *data, size_t len);
 
@@ -133,4 +141,4 @@ private:
 } // namespace net
 } // namespace muduo
 
-#endif /* CDF63D07_06D4_45B3_8D3E_26B7DA494D51 */
+#endif /* __MUDUO_NET_BUFFER_H_ */

@@ -8,7 +8,7 @@
 namespace muduo {
 namespace net {
 
-/// @brief 
+/// @brief
 
 class InetAddress {
 public:
@@ -22,6 +22,8 @@ public:
     explicit InetAddress(const struct sockaddr_in6 &addr) : addr6_(addr) {}
 
     sa_family_t family() const { return addr_.sin_family; }
+
+    bool MatchIp(const struct sockaddr_in6 &addr6);
 
     std::string Ip() const;
     std::string IpPort() const;
