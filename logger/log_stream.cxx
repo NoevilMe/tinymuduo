@@ -105,7 +105,16 @@ LogStream &LogStream::operator<<(const std::string &str) {
     buffer_.Append(str.data(), str.size());
     return *this;
 }
-LogStream &LogStream::operator<<(const SmallBuffer &buf) { return *this; }
+
+LogStream &LogStream::operator<<(const StringPiece &str) {
+    buffer_.Append(str.data(), str.size());
+    return *this;
+}
+
+LogStream &LogStream::operator<<(const SmallBuffer &buf) {
+    *this << buf.ToStringPiece();
+    return *this;
+}
 
 // 将整数处理成字符串并添加到buffer_中
 template <typename T>

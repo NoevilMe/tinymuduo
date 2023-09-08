@@ -1,6 +1,8 @@
 #ifndef B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
 #define B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
 
+#include "string_piece.h"
+
 #include <cstring>
 #include <string>
 
@@ -45,6 +47,7 @@ public:
     void Reset() { cur_ = data_; }
     void Bzero() { ::bzero(data_, sizeof(data_)); }
     std::string ToString() const { return std::string(data_, Length()); }
+    StringPiece ToStringPiece() const { return StringPiece(data_, Length()); }
 
 private:
     const char *end() const { return data_ + sizeof(data_); }

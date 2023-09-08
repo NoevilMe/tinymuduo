@@ -3,6 +3,7 @@
 
 #include "fixed_buffer.h"
 #include "noncopyable.h"
+#include "string_piece.h"
 
 namespace muduo {
 namespace log {
@@ -36,6 +37,7 @@ public:
     LogStream &operator<<(const char *str);
     LogStream &operator<<(const unsigned char *str);
     LogStream &operator<<(const std::string &str);
+    LogStream &operator<<(const StringPiece &v);
     LogStream &operator<<(const SmallBuffer &buf);
 
 private:
