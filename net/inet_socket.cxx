@@ -66,6 +66,14 @@ void Socket::SetKeepAlive(bool on) {
                  static_cast<socklen_t>(sizeof optval));
 }
 
+void Socket::SetSendBufSize(size_t size) {
+    sockets::SetSendBufSize(sock_fd_, size);
+}
+
+void Socket::SetRecvBufSize(size_t size) {
+    sockets::SetRecvBufSize(sock_fd_, size);
+}
+
 namespace sockets {
 int CreateNonblockingOrDie(sa_family_t family) {
     int fd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
@@ -239,6 +247,16 @@ std::string ToIp(const struct sockaddr *addr) {
     char buf[64] = {0};
     ToIp(buf, sizeof(buf), addr);
     return buf;
+}
+
+void SetSendBufSize(int sockfd, size_t size) {
+    ::setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, &size,
+                 static_cast<socklen_t>(sizeof(size)));
+}
+
+void SetRecvBufSize(int sockfd, size_t size) {
+    ::setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, &size,
+                 static_cast<socklen_t>(sizeof(size)));
 }
 
 } // namespace sockets

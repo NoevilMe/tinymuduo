@@ -35,6 +35,10 @@ public:
     void SendInLoop(const std::string &message, const InetAddress &peer);
     void SendInLoop(const void *data, size_t len, const InetAddress *peer);
 
+    void SetSendBufSize(size_t size);
+
+    void SetRecvBufSize(size_t size);
+
     // bind成功回调
     void set_binded_callback(const UdpServerBindedCallback &cb) {
         binded_callback_ = cb;

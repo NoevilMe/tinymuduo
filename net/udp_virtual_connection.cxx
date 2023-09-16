@@ -35,6 +35,16 @@ void UdpVirtualConnection::Close() {
         udp_server_->Close();
 }
 
+void UdpVirtualConnection::SetSendBufSize(size_t size) {
+    if (udp_server_)
+        udp_server_->SetSendBufSize(size);
+}
+
+void UdpVirtualConnection::SetRecvBufSize(size_t size) {
+    if (udp_server_)
+        udp_server_->SetRecvBufSize(size);
+}
+
 void UdpVirtualConnection::Send(const void *data, int len) {
     if (udp_server_)
         udp_server_->Send(data, len, &peer_addr_);

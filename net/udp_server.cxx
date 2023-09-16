@@ -84,6 +84,7 @@ void UdpServer::SendInLoop(const void *data, size_t len,
     size_t remaining = len;
 
     // Hard to provide peer address in the write callback. writing directly
+
     while (remaining > 0) {
         size_t send_len =
             remaining > kUdpPacketMaxSize ? kUdpPacketMaxSize : remaining;
@@ -92,6 +93,7 @@ void UdpServer::SendInLoop(const void *data, size_t len,
 
         LOG_TRACE << "SendTo " << peer->IpPort() << " length " << nwrote;
         if (nwrote > 0) {
+            // TODO: protocol prossibly does't work!!!
             remaining -= nwrote;
         } else if (nwrote == 0) {
             // FIXME:
@@ -105,6 +107,10 @@ void UdpServer::SendInLoop(const void *data, size_t len,
         }
     }
 }
+
+void UdpServer::SetSendBufSize(size_t size) { socket_->SetSendBufSize(size); }
+
+void UdpServer::SetRecvBufSize(size_t size) { socket_->SetRecvBufSize(size); }
 
 void UdpServer::BindingFinished() {
     loop_->AssertInLoopThread();

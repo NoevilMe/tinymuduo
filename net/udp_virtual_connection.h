@@ -40,6 +40,10 @@ public:
     void Send(const void *data, int len);
     void Send(const std::string &message);
 
+    void SetSendBufSize(size_t size);
+
+    void SetRecvBufSize(size_t size);
+
     // bind成功回调
     void set_binded_callback(const UdpServerBindedCallback &cb) {
         if (udp_server_)

@@ -64,6 +64,10 @@ public:
     ///
     void SetKeepAlive(bool on);
 
+    void SetSendBufSize(size_t size);
+
+    void SetRecvBufSize(size_t size);
+
 private:
     const int sock_fd_;
 };
@@ -115,6 +119,10 @@ struct sockaddr_in6 GetLocalAddr(int sockfd);
 ///
 /// Creates a non-blocking udp socket file descriptor,
 int CreateNonblockingUdp(sa_family_t family);
+
+void SetSendBufSize(int sockfd, size_t size);
+
+void SetRecvBufSize(int sockfd, size_t size);
 
 } // namespace sockets
 } // namespace net
