@@ -87,6 +87,18 @@ public:
         return result;
     }
 
+    // for debug, do not change index
+    std::string TryRetrieveAllAsString() {
+        return TryRetrieveAsString(ReadableBytes());
+    }
+
+    // for debug, do not change index
+    std::string TryRetrieveAsString(size_t len) {
+        assert(len <= ReadableBytes());
+        std::string result(Peek(), len);
+        return result;
+    }
+
     void RetrieveUntil(const char *end) {
         assert(Peek() <= end);
         assert(end <= BeginWrite());
