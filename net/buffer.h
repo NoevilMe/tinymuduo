@@ -33,6 +33,13 @@ public:
           reader_index_(kCheapPrepend),
           writer_index_(kCheapPrepend) {}
 
+    explicit Buffer(size_t prepend_size, size_t initial_size = kInitialSize)
+        : buffer_(prepend_size + initial_size),
+          reader_index_(prepend_size),
+          writer_index_(prepend_size) {
+        assert(prepend_size >= 10);
+    }
+
     size_t ReadableBytes() const { return writer_index_ - reader_index_; }
 
     size_t WritableBytes() const { return buffer_.size() - writer_index_; }

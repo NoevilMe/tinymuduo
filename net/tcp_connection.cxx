@@ -25,7 +25,10 @@ TcpConnection::TcpConnection(event_loop::EventLoop *loop,
     socket_->SetKeepAlive(true);
 }
 
-TcpConnection::~TcpConnection() {}
+TcpConnection::~TcpConnection() {
+    LOG_DEBUG << "TcpConnection::dtor[" << name_ << "] at " << this
+              << " fd=" << socket_->fd();
+}
 
 void TcpConnection::Send(const void *message, int len) {
     if (state_ == kConnected) {
