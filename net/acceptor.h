@@ -23,7 +23,7 @@ class InetAddress;
 ///
 /// Acceptor of incoming TCP connections.
 ///
-class Acceptor : event_loop::Noncopyable {
+class Acceptor : Noncopyable {
 public:
     using NewConnectionCallback =
         std::function<void(int sockfd, const InetAddress &)>;

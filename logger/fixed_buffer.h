@@ -1,5 +1,5 @@
-#ifndef B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
-#define B5568996_19E4_40A9_AD2A_6ABB2AEA76E5
+#ifndef __MUDUO_FIXED_BUFFER_H_
+#define __MUDUO_FIXED_BUFFER_H_
 
 #include "string_piece.h"
 
@@ -7,7 +7,6 @@
 #include <string>
 
 namespace muduo {
-namespace log {
 
 /**
  * 自定义的Buffer工具类，可以申请制定大小的空间的内存区域，并实现了一些接口方便
@@ -60,7 +59,6 @@ private:
     /*data_        cur_              end()*/
 };
 
-} // namespace log
 } // namespace muduo
 
-#endif /* B5568996_19E4_40A9_AD2A_6ABB2AEA76E5 */
+#endif /* __MUDUO_FIXED_BUFFER_H_ */

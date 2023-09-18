@@ -1,5 +1,5 @@
-#ifndef C113F467_CAB2_43D4_B54D_5EC673EC66FB
-#define C113F467_CAB2_43D4_B54D_5EC673EC66FB
+#ifndef __MUDUO_NET_INET_SOCKET_H_
+#define __MUDUO_NET_INET_SOCKET_H_
 
 #include "inet_address.h"
 
@@ -128,4 +128,4 @@ void SetRecvBufSize(int sockfd, size_t size);
 } // namespace net
 } // namespace muduo
 
-#endif /* C113F467_CAB2_43D4_B54D_5EC673EC66FB */
+#endif /* __MUDUO_NET_INET_SOCKET_H_ */

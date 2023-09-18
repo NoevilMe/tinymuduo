@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.0)
 project(eventloop)
 
-set(CMAKE_CXX_STANDARD 11)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 11)
+endif()
 
-option(BUILD_EVENTLOOP_EXAMPLES "build examples" OFF)
+option(ENABLE_COMPONENT_PROTOBUF "enable component protobuf" OFF)
+option(EVENTLOOP_USE_MUDUO_LOGGER "use muduo logger in eventloop" OFF)
 
-set(LIB_SRC
+set(EVENTLOOP_SRC
     channel.cxx
     event_loop.cxx
     poller.cxx
@@ -14,21 +17,27 @@ set(LIB_SRC
     timestamp.cxx
     timespec.cxx
     this_thread.cxx
-    proto_codec.cxx
-    event_loop_thread.cxx event_loop_threadpool.cxx)
+    event_loop_thread.cxx
+    event_loop_threadpool.cxx)
 
-add_library(eventloop STATIC ${LIB_SRC})
+if(ENABLE_COMPONENT_PROTOBUF)
+  list(APPEND EVENTLOOP_SRC proto_codec.cxx)
+
+  find_package(Protobuf REQUIRED)
+  if(PROTOBUF_FOUND)
+    message(STATUS "protobuf found, ${Protobuf_PROTOC_EXECUTABLE}")
+  else()
+    message(FATAL_ERROR "protobuf library is not found")
+  endif()
+endif()
+
+add_library(eventloop STATIC ${EVENTLOOP_SRC})
 target_compile_options(eventloop PRIVATE -Wno-psabi)
 target_include_directories(eventloop PUBLIC ${MUDUO_TOP})
+if(EVENTLOOP_USE_MUDUO_LOGGER)
+  target_compile_definitions(eventloop PRIVATE EVENTLOOP_USE_MUDUO_LOGGER)
+endif()
 # target_link_libraries(eventloop PUBLIC rt)
-
-if(BUILD_EVENTLOOP_EXAMPLES)
-  add_executable(test_timer example/test_timer.cxx)
-  target_link_libraries(test_timer eventloop)
-
-  add_executable(test_timer2 example/test_timer2.cxx)
-  target_link_libraries(test_timer2 eventloop)
-
-  add_executable(test_ts example/test_timestamp.cxx)
-  target_link_libraries(test_ts eventloop)
+if(PROTOBUF_FOUND)
+  target_link_libraries(eventloop PUBLIC ${PROTOBUF_LIBRARIES})
 endif()

@@ -1,5 +1,5 @@
-#ifndef F79AA6B7_094F_4CB4_B5CC_3710B459681B
-#define F79AA6B7_094F_4CB4_B5CC_3710B459681B
+#ifndef __MUDUO_NET_CALLBACK_H_
+#define __MUDUO_NET_CALLBACK_H_
 
 #include "eventloop/timestamp.h"
 
@@ -40,4 +40,4 @@ using UdpServerMessageCallback =
 
 } // namespace net
 } // namespace muduo
-#endif /* F79AA6B7_094F_4CB4_B5CC_3710B459681B */
+#endif /* __MUDUO_NET_CALLBACK_H_ */

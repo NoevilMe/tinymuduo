@@ -3,18 +3,41 @@
 #include "poller.h"
 #include "timer.h"
 
-#if 1
+#ifdef EVENTLOOP_USE_MUDUO_LOGGER
 #include "logger/logger.h"
 #else
-#include <iostream>
-#define LOG_TRACE std::cout
-#define LOG_DEBUG std::cout
-#define LOG_INFO std::cout
-#define LOG_WARN std::cout
-#define LOG_ERROR std::cout
-#define LOG_FATAL std::cerr
-#define LOG_SYSERR std::cerr
-#define LOG_SYSFATAL std::cerr
+class NullStream {
+public:
+    template <typename T>
+    NullStream &operator<<(T) {
+        return *this;
+    }
+};
+
+#define LOG_TRACE                                                              \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_DEBUG                                                              \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_INFO                                                               \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_WARN                                                               \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_ERROR                                                              \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_FATAL                                                              \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_SYSERR                                                             \
+    if (false)                                                                 \
+    NullStream()
+#define LOG_SYSFATAL                                                           \
+    if (false)                                                                 \
+    NullStream()
 #endif
 
 #include <assert.h>

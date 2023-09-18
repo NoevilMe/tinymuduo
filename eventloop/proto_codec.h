@@ -1,5 +1,5 @@
-#ifndef __PROTO_CODEC_H_
-#define __PROTO_CODEC_H_
+#ifndef __MUDUO_PROTO_CODEC_H_
+#define __MUDUO_PROTO_CODEC_H_
 
 #include "timestamp.h"
 
@@ -103,7 +103,8 @@ public:
     virtual void OnMessage(const MessagePtr &message, Timestamp timestamp) = 0;
 };
 
-template <typename T> class CallbackT : public Callback {
+template <typename T>
+class CallbackT : public Callback {
 public:
     using ProtobufMessageTCallback = std::function<void(
         const std::shared_ptr<T> &message, Timestamp timestamp)>;

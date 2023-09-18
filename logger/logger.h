@@ -1,5 +1,5 @@
-#ifndef DAC32AFD_11D3_44B9_A23C_18BD206270B8
-#define DAC32AFD_11D3_44B9_A23C_18BD206270B8
+#ifndef __MUDUO_LOG_LOGGER_H_
+#define __MUDUO_LOG_LOGGER_H_
 
 #include "log_stream.h"
 

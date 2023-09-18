@@ -37,8 +37,8 @@
 //
 // Arghh!  I wish C++ literals were automatically of type "string".
 
-#ifndef __MUDUO_STRING_PIECE_H
-#define __MUDUO_STRING_PIECE_H
+#ifndef __MUDUO_STRING_PIECE_H_
+#define __MUDUO_STRING_PIECE_H_
 
 #include <iosfwd> // for ostream forward-declaration
 #include <string.h>
@@ -183,4 +183,4 @@ struct __type_traits<muduo::StringPiece> {
 // allow StringPiece to be logged
 // std::ostream &operator<<(std::ostream &o, const muduo::StringPiece &piece);
 
-#endif // MUDUO_BASE_STRINGPIECE_H
+#endif // __MUDUO_STRING_PIECE_H_

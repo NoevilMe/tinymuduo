@@ -1,5 +1,5 @@
-#ifndef DBAA5A75_D448_4471_8FF8_443B94BD26B7
-#define DBAA5A75_D448_4471_8FF8_443B94BD26B7
+#ifndef __MUDUO_NET_UDP_SERVER_H_
+#define __MUDUO_NET_UDP_SERVER_H_
 
 #include "buffer.h"
 #include "callback.h"
@@ -12,8 +12,7 @@
 namespace muduo {
 namespace net {
 
-class UdpServer : event_loop::Noncopyable,
-                  public std::enable_shared_from_this<UdpServer> {
+class UdpServer : Noncopyable, public std::enable_shared_from_this<UdpServer> {
 public:
     UdpServer(event_loop::EventLoop *loop, const std::string &name, int sockfd,
               const InetAddress &local_addr);
@@ -84,4 +83,4 @@ private:
 } // namespace net
 } // namespace muduo
 
-#endif // __UDP_VIRTUAL_CONNECTION_H__
+#endif // __MUDUO_NET_UDP_SERVER_H_

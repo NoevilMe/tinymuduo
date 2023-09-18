@@ -1,5 +1,5 @@
-#ifndef C5CEB474_D88A_4EC6_A948_23C2A873BC2D
-#define C5CEB474_D88A_4EC6_A948_23C2A873BC2D
+#ifndef __MUDUO_LOG_STREAM_H_
+#define __MUDUO_LOG_STREAM_H_
 
 #include "fixed_buffer.h"
 #include "noncopyable.h"
@@ -53,4 +53,4 @@ private:
 } // namespace log
 } // namespace muduo
 
-#endif /* C5CEB474_D88A_4EC6_A948_23C2A873BC2D */
+#endif /* __MUDUO_LOG_STREAM_H_ */

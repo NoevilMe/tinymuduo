@@ -1,5 +1,5 @@
-#ifndef A5B387F9_5EE0_43E5_B146_6BF54ECD4C12
-#define A5B387F9_5EE0_43E5_B146_6BF54ECD4C12
+#ifndef __MUDUO_NET_INET_ADDRESS_H_
+#define __MUDUO_NET_INET_ADDRESS_H_
 
 #include <string>
 
@@ -45,4 +45,4 @@ private:
 } // namespace net
 } // namespace muduo
 
-#endif /* A5B387F9_5EE0_43E5_B146_6BF54ECD4C12 */
+#endif /* __MUDUO_NET_INET_ADDRESS_H_ */

@@ -1,8 +1,12 @@
-#ifndef B1C1FF97_47FD_4BED_BE5C_419B92166E33
-#define B1C1FF97_47FD_4BED_BE5C_419B92166E33
+#ifndef __MUDUO_NONCOPYABLE_H_
+#define __MUDUO_NONCOPYABLE_H_
+
+/**
+ * @brief Same file in eventloop
+ *
+ */
 
 namespace muduo {
-namespace log {
 
 class Noncopyable {
 protected:
@@ -14,7 +18,6 @@ protected:
     ~Noncopyable() = default;
 };
 
-} // namespace log
 } // namespace muduo
 
-#endif /* B1C1FF97_47FD_4BED_BE5C_419B92166E33 */
+#endif /* __MUDUO_NONCOPYABLE_H_ */

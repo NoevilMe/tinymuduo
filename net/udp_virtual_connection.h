@@ -14,7 +14,7 @@ namespace muduo {
 namespace net {
 
 class UdpVirtualConnection
-    : event_loop::Noncopyable,
+    : Noncopyable,
       public std::enable_shared_from_this<UdpVirtualConnection> {
 public:
     UdpVirtualConnection(event_loop::EventLoop *loop, const std::string &name,

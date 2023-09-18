@@ -1,5 +1,5 @@
-#ifndef AC995845_A409_4FD6_BC29_FB96968A8D20
-#define AC995845_A409_4FD6_BC29_FB96968A8D20
+#ifndef __MUDUO_NET_TCP_SERVER_H_
+#define __MUDUO_NET_TCP_SERVER_H_
 
 #include "acceptor.h"
 #include "callback.h"
@@ -11,7 +11,7 @@
 namespace muduo {
 namespace net {
 
-class TcpServer : event_loop::Noncopyable {
+class TcpServer : Noncopyable {
 
 public:
     using ThreadInitCallback = std::function<void(event_loop::EventLoop *)>;
@@ -100,4 +100,4 @@ private:
 
 } // namespace net
 } // namespace muduo
-#endif /* AC995845_A409_4FD6_BC29_FB96968A8D20 */
+#endif /* __MUDUO_NET_TCP_SERVER_H_ */

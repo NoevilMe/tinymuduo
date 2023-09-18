@@ -1,5 +1,5 @@
-#ifndef D1907193_EA1E_4678_B647_A35BF93C5BCC
-#define D1907193_EA1E_4678_B647_A35BF93C5BCC
+#ifndef __MUDUO_NET_TCP_CONNECTION_H_
+#define __MUDUO_NET_TCP_CONNECTION_H_
 
 #include "buffer.h"
 #include "callback.h"
@@ -12,7 +12,7 @@
 namespace muduo {
 namespace net {
 
-class TcpConnection : event_loop::Noncopyable,
+class TcpConnection : Noncopyable,
                       public std::enable_shared_from_this<TcpConnection> {
 public:
     TcpConnection(event_loop::EventLoop *loop, const std::string &name,
@@ -106,4 +106,4 @@ private:
 } // namespace net
 } // namespace  muduo
 
-#endif /* D1907193_EA1E_4678_B647_A35BF93C5BCC */
+#endif /* __MUDUO_NET_TCP_CONNECTION_H_ */

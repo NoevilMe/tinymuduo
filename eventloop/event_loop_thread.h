@@ -37,4 +37,4 @@ private:
 } // namespace event_loop
 } // namespace muduo
 
-#endif /* CA48AE7F_2E6B_4B1E_8AF7_5FAB83B89F70 */
+#endif /* __MUDUO_EVENT_LOOP_THREAD_H_ */

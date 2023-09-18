@@ -1,5 +1,5 @@
-#ifndef FFE9D299_19E6_42C4_BD6F_084BA0233042
-#define FFE9D299_19E6_42C4_BD6F_084BA0233042
+#ifndef __MUDUO_LOG_FILE_H_
+#define __MUDUO_LOG_FILE_H_
 
 #include <memory>
 #include <mutex>
@@ -84,4 +84,4 @@ private:
 
 } // namespace log
 } // namespace muduo
-#endif /* FFE9D299_19E6_42C4_BD6F_084BA0233042 */
+#endif /* __MUDUO_LOG_FILE_H_ */

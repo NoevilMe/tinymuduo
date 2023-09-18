@@ -1,5 +1,5 @@
-#ifndef B227EC26_F8E3_44BD_AF25_97DB462D27BA
-#define B227EC26_F8E3_44BD_AF25_97DB462D27BA
+#ifndef __MUDUO_ENDIAN_H_
+#define __MUDUO_ENDIAN_H_
 
 #include <cstdint>
 #include <endian.h>
