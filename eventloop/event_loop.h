@@ -4,6 +4,7 @@
 #include "callback.h"
 #include "noncopyable.h"
 #include "this_thread.h"
+#include "timer_id.h"
 #include "timestamp.h"
 
 #include <atomic>
@@ -20,7 +21,7 @@ namespace event_loop {
 
 class Channel;
 class Poller;
-class Timer;
+class TimerQueue;
 
 class EventLoop : public Noncopyable {
 public:
@@ -54,20 +55,31 @@ public:
 
     // timers
 
-    std::shared_ptr<Timer> RunAt(Timestamp time, TimerCallback cb);
+    ///
+    /// Runs callback at 'time'.
+    /// Safe to call from other threads.
+    ///
+    TimerId RunAt(Timestamp time, TimerCallback cb);
+    ///
+    /// Runs callback after @c delay seconds.
+    /// Safe to call from other threads.
+    ///
+    TimerId RunAfter(double delay, TimerCallback cb);
+    ///
+    /// Runs callback every @c interval seconds.
+    /// Safe to call from other threads.
+    ///
+    TimerId RunEvery(double interval, TimerCallback cb);
+    TimerId RunEveryAfter(double interval, double delay, TimerCallback cb);
+    TimerId RunEveryAt(double interval, Timestamp time, TimerCallback cb);
+    ///
+    /// Cancels the timer.
+    /// Safe to call from other threads.
+    ///
+    void Cancel(TimerId timer_id);
 
-    std::shared_ptr<Timer> RunAfter(double delay, TimerCallback cb);
-
-    std::shared_ptr<Timer> RunEvery(double interval, TimerCallback cb);
-
-    std::shared_ptr<Timer> RunEveryAfter(double interval, double delay,
-                                         TimerCallback cb);
-
-    std::shared_ptr<Timer> RunEveryAt(double interval, Timestamp time,
-                                      TimerCallback cb);
-
-    void RemoveTimer(int timer_fd);
-    std::size_t TimerCount();
+    // void RemoveTimer(int timer_fd);
+    // std::size_t TimerCount();
 
     void UpdateChannel(Channel *channel);
     void RemoveChannel(Channel *channel);
@@ -112,7 +124,7 @@ private:
     // we don't expose Channel to client.
     std::unique_ptr<Channel> wakeup_channel_;
 
-    std::map<int, std::shared_ptr<Timer>> timers_;
+    std::unique_ptr<TimerQueue> timer_queue_;
 };
 
 } // namespace event_loop

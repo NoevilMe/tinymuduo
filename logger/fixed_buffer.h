@@ -17,8 +17,8 @@ namespace muduo {
  */
 
 // Buffer默认提供一下两种大小
-const int kSmallBuffer = 4096;
-const int kLargeBuffer = 4096 * 1024;
+constexpr int kSmallBuffer = 4096; //4K 用于日志行大小
+constexpr int kLargeBuffer = 4096 * 1024;
 
 // Buffer的大小（可以是任意大于0的整数，但是日志系统默认用到的是kSmallBuffer和kLargeBuffer）
 template <int SIZE>

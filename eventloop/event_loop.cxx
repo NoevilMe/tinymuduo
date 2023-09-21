@@ -1,44 +1,9 @@
 #include "event_loop.h"
 #include "channel.h"
+#include "import_log.h"
 #include "poller.h"
 #include "timer.h"
-
-#ifdef EVENTLOOP_USE_MUDUO_LOGGER
-#include "logger/logger.h"
-#else
-class NullStream {
-public:
-    template <typename T>
-    NullStream &operator<<(T) {
-        return *this;
-    }
-};
-
-#define LOG_TRACE                                                              \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_DEBUG                                                              \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_INFO                                                               \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_WARN                                                               \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_ERROR                                                              \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_FATAL                                                              \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_SYSERR                                                             \
-    if (false)                                                                 \
-    NullStream()
-#define LOG_SYSFATAL                                                           \
-    if (false)                                                                 \
-    NullStream()
-#endif
+#include "timer_queue.h"
 
 #include <assert.h>
 #include <sys/eventfd.h>
@@ -66,7 +31,8 @@ EventLoop::EventLoop()
       calling_pending_functors_(false),
       poller_(new EpollPoller(this)),
       wakeup_fd_(CreateEventfd()),
-      wakeup_channel_(new Channel(this, wakeup_fd_)) {
+      wakeup_channel_(new Channel(this, wakeup_fd_)),
+      timer_queue_(new TimerQueue(this)) {
     LOG_DEBUG << "EventLoop created " << this << " in thread " << thread_id_;
     if (t_loop_in_this_thread) {
         LOG_FATAL << "Another EventLoop " << t_loop_in_this_thread
@@ -141,37 +107,33 @@ void EventLoop::QueueInLoop(Functor cb) {
     }
 }
 
-std::shared_ptr<Timer> EventLoop::RunAt(Timestamp time, TimerCallback cb) {
-    return RunEveryAt(0, time, std::move(cb));
+TimerId EventLoop::RunAt(Timestamp time, TimerCallback cb) {
+    return timer_queue_->AddTimer(std::move(cb), time, 0.0);
 }
 
-std::shared_ptr<Timer> EventLoop::RunAfter(double delay, TimerCallback cb) {
-    return RunEveryAfter(0, delay, std::move(cb));
+TimerId EventLoop::RunAfter(double delay, TimerCallback cb) {
+    auto now = Timestamp::Now();
+    Timestamp time = now + delay;
+    return RunAt(time, std::move(cb));
 }
 
-std::shared_ptr<Timer> EventLoop::RunEvery(double interval, TimerCallback cb) {
-    return RunEveryAfter(interval, 0, std::move(cb));
+TimerId EventLoop::RunEvery(double interval, TimerCallback cb) {
+    return RunEveryAfter(interval, interval, std::move(cb));
 }
 
-std::shared_ptr<Timer> EventLoop::RunEveryAfter(double interval, double delay,
-                                                TimerCallback cb) {
-    std::shared_ptr<Timer> timer(
-        new Timer(this, std::move(cb), delay, interval));
-    timers_.insert(std::make_pair(timer->fd(), timer));
-    return timer;
+TimerId EventLoop::RunEveryAfter(double interval, double delay,
+                                 TimerCallback cb) {
+    auto now = Timestamp::Now();
+    Timestamp time = now + delay;
+    return RunEveryAt(interval, time, std::move(cb));
 }
 
-std::shared_ptr<Timer> EventLoop::RunEveryAt(double interval, Timestamp time,
-                                             TimerCallback cb) {
-    std::shared_ptr<Timer> timer(
-        new Timer(this, std::move(cb), time, interval));
-    timers_.insert(std::make_pair(timer->fd(), timer));
-    return timer;
+TimerId EventLoop::RunEveryAt(double interval, Timestamp time,
+                              TimerCallback cb) {
+    return timer_queue_->AddTimer(std::move(cb), time, interval);
 }
 
-void EventLoop::RemoveTimer(int timer_fd) { timers_.erase(timer_fd); }
-
-std::size_t EventLoop::TimerCount() { return timers_.size(); }
+void EventLoop::Cancel(TimerId timer_id) { timer_queue_->Cancel(timer_id); }
 
 void EventLoop::UpdateChannel(Channel *channel) {
 

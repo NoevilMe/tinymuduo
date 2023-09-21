@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 option(BUILD_TINYMODUO_EXAMPLES "build examples" OFF)
 
+set(CMAKE_CXX_FLAGS "-g -O0")
+
 set(EVENTLOOP_USE_MUDUO_LOGGER
     ON
     CACHE BOOL "enable muduo logger in eventloop component")

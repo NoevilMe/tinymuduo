@@ -2,7 +2,10 @@
 #define __MUDUO_TIMER_H_
 
 #include "callback.h"
+#include "noncopyable.h"
+#include "timestamp.h"
 
+#include <atomic>
 #include <memory>
 
 namespace muduo {
@@ -12,33 +15,34 @@ class EventLoop;
 class Channel;
 class Timestamp;
 
-class Timer : public std::enable_shared_from_this<Timer> {
+class Timer : Noncopyable {
 public:
-    Timer(EventLoop *eventloop, TimerCallback cb, Timestamp when,
-          double interval_seconds);
-    explicit Timer(EventLoop *eventloop, TimerCallback cb, double delay_seconds,
-                   double interval_seconds);
-    ~Timer();
+    Timer(TimerCallback cb, Timestamp when, double interval)
+        : cb_(std::move(cb)),
+          expiration_(when),
+          interval_(interval),
+          repeat_(interval > 0.0),
+          sequence_(++s_num) {}
+    ~Timer() {}
 
-    void Stop();
+    void Run() const { cb_(); }
 
-    bool Expired();
+    void Restart(Timestamp now);
 
-    int fd() const { return timer_fd_; }
+    Timestamp expiration() const { return expiration_; }
+    bool repeat() const { return repeat_; }
+    int64_t sequence() const { return sequence_; }
 
-    void Postpone(double seconds);
-
-    void PostponeAfter(double seconds);
+    static int64_t Num() { return s_num; }
 
 private:
-    void InitTimer(double delay_seconds, double interval_seconds);
+    const TimerCallback cb_;
+    Timestamp expiration_;
+    const double interval_;
+    const bool repeat_;
+    const int64_t sequence_;
 
-    void ReadTimer();
-
-    EventLoop *eventloop_;
-    TimerCallback cb_;
-    int timer_fd_;
-    std::unique_ptr<Channel> timer_channel_;
+    static std::atomic_int64_t s_num;
 };
 
 } // namespace event_loop

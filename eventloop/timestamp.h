@@ -50,6 +50,8 @@ public:
 
     static Timestamp FromTimespec(const struct timespec &ts);
 
+    static struct timespec HowMuchTimeFromNow(Timestamp when);
+
     bool operator==(const Timestamp &rhs) {
         return ts_.tv_sec == rhs.ts_.tv_sec && ts_.tv_nsec == rhs.ts_.tv_nsec;
     }

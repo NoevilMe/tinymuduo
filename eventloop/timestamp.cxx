@@ -102,5 +102,19 @@ Timestamp Timestamp::FromTimespec(const struct timespec &ts) {
     return Timestamp(ts);
 }
 
+struct timespec Timestamp::HowMuchTimeFromNow(Timestamp when) {
+    int64_t nano_seconds =
+        when.NanosecondsSinceEpoch() - Now().NanosecondsSinceEpoch();
+    if (nano_seconds < 100000) {
+        nano_seconds = 100000;
+    }
+
+    struct timespec ts;
+    ts.tv_sec = static_cast<time_t>(nano_seconds / kNanoSecondsPerSecond);
+    ts.tv_nsec = static_cast<long>(nano_seconds % kNanoSecondsPerSecond);
+
+    return ts;
+}
+
 } // namespace event_loop
 } // namespace muduo

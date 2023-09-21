@@ -13,6 +13,7 @@ set(EVENTLOOP_SRC
     event_loop.cxx
     poller.cxx
     timer.cxx
+    timer_queue.cxx
     timespan.cxx
     timestamp.cxx
     timespec.cxx
