@@ -22,15 +22,24 @@ void new_conn(const muduo::net::TcpConnectionPtr &conn) {
 void on_message(const muduo::net::TcpConnectionPtr &conn,
                 muduo::net::Buffer *buf, muduo::event_loop::Timestamp) {
 
-    LOG_INFO << conn->name() << " receive msg: " << buf->RetrieveAllAsString();
+    auto data = buf->RetrieveAllAsString();
+    LOG_INFO << conn->name() << " receive " << data.length()
+             << " bytes, content: " << data;
     conn->Send("55555");
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        std::cout << "usage: " << std::endl;
+        std::cout << argv[0] << " PORT" << std::endl;
+        return 1;
+    }
+    int port = atoi(argv[1]);
+
     muduo::log::Logger::set_log_level(muduo::log::Logger::TRACE);
     muduo::event_loop::EventLoop loop;
 
-    muduo::net::InetAddress addr(38880);
+    muduo::net::InetAddress addr(port);
 
     muduo::net::TcpServer server(&loop, addr, "Sample Tcp Server");
     server.set_connection_callback(std::bind(new_conn, std::placeholders::_1));

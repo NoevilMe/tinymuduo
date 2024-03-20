@@ -3,7 +3,6 @@
 
 #include "event_loop.h"
 #include "poller.h"
-#include "proto_codec.h"
 #include "timer.h"
 #include "timespan.h"
 #include "timespec.h"
